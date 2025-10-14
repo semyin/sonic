@@ -1,23 +1,27 @@
 {
   "scripts": {
     "dev": "vike dev",
-    "build": "vike build",
-    "preview": "vike preview"
+    "build": "vike build && wrangler pages dev",
+    "preview": "vike preview && wrangler pages deploy"
   },
   "dependencies": {
-    "vike": "^0.4.239",
     "@vitejs/plugin-react": "^5.0.2",
+    "cross-env": "^10.1.0",
+    "hono": "^4.9.12",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "vike-react": "^0.6.5"
+    "vike": "^0.4.239",
+    "vike-cloudflare": "^0.2.7",
+    "vike-react": "^0.6.5",
+    "wrangler": "^4.42.2"
   },
   "devDependencies": {
-    "typescript": "^5.9.2",
-    "vite": "^7.1.4",
+    "@tailwindcss/vite": "^4.1.13",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "tailwindcss": "^4.1.13",
-    "@tailwindcss/vite": "^4.1.13"
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4"
   },
   "type": "module"
 }

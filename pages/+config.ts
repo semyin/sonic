@@ -1,6 +1,7 @@
 import type { Config } from "vike/types";
 import vikeReact from "vike-react/config";
 import Layout from "../layouts/LayoutDefault.js";
+import vikeCloudflare from 'vike-cloudflare/config'
 
 // Default config (can be overridden by pages)
 // https://vike.dev/config
@@ -13,5 +14,7 @@ export default {
   title: "My Vike App",
   description: "Demo showcasing Vike",
 
-  extends: vikeReact,
+  extends: [vikeReact, vikeCloudflare],
+
+  server: 'server/index.ts'
 } satisfies Config;
