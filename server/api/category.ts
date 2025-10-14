@@ -1,17 +1,17 @@
 // server/api/category.ts
 import { Hono } from 'hono'
-import { db } from '../../database/client'
+import { getDb } from '../../database/client'
 import { CategoryService } from '../../database/services'
 import type { Context } from 'hono'
 import { success, error, handleError } from '../utils/response'
 
 export const categoryRoutes = new Hono()
 
-const categoryService = new CategoryService(db)
-
 // GET /api/categories - Get all categories
 categoryRoutes.get('/', async (c: Context) => {
   try {
+    const db = getDb()
+    const categoryService = new CategoryService(db)
     const categories = await categoryService.getAllCategories()
     return success(c, categories)
   } catch (err) {
@@ -28,6 +28,8 @@ categoryRoutes.get('/:id', async (c: Context) => {
       return error(c, 'Invalid category ID', 400)
     }
 
+    const db = getDb()
+    const categoryService = new CategoryService(db)
     const category = await categoryService.getCategoryById(id)
 
     if (!category) {
@@ -44,6 +46,8 @@ categoryRoutes.get('/:id', async (c: Context) => {
 categoryRoutes.post('/', async (c: Context) => {
   try {
     const body = await c.req.json()
+    const db = getDb()
+    const categoryService = new CategoryService(db)
     const category = await categoryService.createCategory(body)
     return success(c, category, 201)
   } catch (err) {
@@ -61,6 +65,8 @@ categoryRoutes.put('/:id', async (c: Context) => {
       return error(c, 'Invalid category ID', 400)
     }
 
+    const db = getDb()
+    const categoryService = new CategoryService(db)
     const category = await categoryService.updateCategory(id, body)
 
     if (!category) {
@@ -82,6 +88,8 @@ categoryRoutes.delete('/:id', async (c: Context) => {
       return error(c, 'Invalid category ID', 400)
     }
 
+    const db = getDb()
+    const categoryService = new CategoryService(db)
     await categoryService.deleteCategory(id)
     return success(c, null, 200, 'Category deleted successfully')
   } catch (err) {

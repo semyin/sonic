@@ -12,7 +12,8 @@ export interface DbEnv {
   DATABASE_URL: string
 }
 
-let clientInstance: postgres.Sql | null = null
+// IMPORTANT: Don't create singleton in Cloudflare Workers
+// Each request should get a fresh connection from the pool
 
 export function getDb(env?: DbEnv): DrizzleDb {
   const databaseUrl = env?.DATABASE_URL || process.env.DATABASE_URL
@@ -21,18 +22,17 @@ export function getDb(env?: DbEnv): DrizzleDb {
     throw new Error('DATABASE_URL is not set')
   }
 
-  // For Cloudflare Workers with Supabase Pooler: use transaction mode settings
-  if (!clientInstance) {
-    clientInstance = postgres(databaseUrl, {
-      prepare: false,        // CRITICAL: Disable prepared statements for pooler transaction mode
-      max: 1,                // Single connection for edge runtime
-      idle_timeout: 20,      // Close idle connections after 20s
-      connect_timeout: 10,   // Connection timeout
-      max_lifetime: 60 * 30, // Max connection lifetime: 30 minutes
-    })
-  }
+  // Create a new postgres client for each call
+  // The postgres library handles internal connection pooling
+  const client = postgres(databaseUrl, {
+    prepare: false,        // CRITICAL: Must disable for Supabase Pooler Transaction Mode
+    max: 1,                // Single connection per client
+    fetch_types: false,    // Disable automatic type fetching for better performance
+    idle_timeout: 20,      // Close idle connections after 20s
+    connect_timeout: 10,   // Connection timeout 10s
+  })
 
-  return drizzle(clientInstance, { schema })
+  return drizzle(client, { schema })
 }
 
 // For creating a fresh connection (useful in some edge cases)
@@ -40,12 +40,12 @@ export function createDb(databaseUrl: string): DrizzleDb {
   const client = postgres(databaseUrl, {
     prepare: false,
     max: 1,
+    fetch_types: false,
     idle_timeout: 20,
     connect_timeout: 10,
-    max_lifetime: 60 * 30,
   })
   return drizzle(client, { schema })
 }
 
-// Export a default database instance for API routes
-export const db: DrizzleDb = getDb()
+// Export a function to get db, not a singleton instance
+export const getDbInstance = () => getDb()

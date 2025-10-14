@@ -1,13 +1,11 @@
 // server/api/article.ts
 import { Hono } from 'hono'
-import { db } from '../../database/client'
+import { getDb } from '../../database/client'
 import { ArticleService } from '../../database/services'
 import type { Context } from 'hono'
 import { success, error, handleError } from '../utils/response'
 
 export const articleRoutes = new Hono()
-
-const articleService = new ArticleService(db)
 
 // GET /api/articles - Get published articles with pagination
 articleRoutes.get('/', async (c: Context) => {
@@ -15,6 +13,8 @@ articleRoutes.get('/', async (c: Context) => {
     const page = Number(c.req.query('page')) || 1
     const pageSize = Number(c.req.query('pageSize')) || 10
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     const articles = await articleService.getPublishedArticles(page, pageSize)
 
     return success(c, articles)
@@ -32,6 +32,8 @@ articleRoutes.get('/:id', async (c: Context) => {
       return error(c, 'Invalid article ID', 400)
     }
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     const article = await articleService.getArticleById(id)
 
     if (!article) {
@@ -58,6 +60,8 @@ articleRoutes.get('/category/:categoryId', async (c: Context) => {
       return error(c, 'Invalid category ID', 400)
     }
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     const articles = await articleService.getArticlesByCategory(categoryId, page, pageSize)
 
     return success(c, articles)
@@ -77,6 +81,8 @@ articleRoutes.get('/tag/:tagId', async (c: Context) => {
       return error(c, 'Invalid tag ID', 400)
     }
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     const articles = await articleService.getArticlesByTag(tagId, page, pageSize)
 
     return success(c, articles)
@@ -90,6 +96,8 @@ articleRoutes.post('/', async (c: Context) => {
   try {
     const body = await c.req.json()
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     const article = await articleService.createArticle(body)
 
     return success(c, article, 201)
@@ -108,6 +116,8 @@ articleRoutes.put('/:id', async (c: Context) => {
       return error(c, 'Invalid article ID', 400)
     }
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     const article = await articleService.updateArticle(id, body)
 
     if (!article) {
@@ -129,6 +139,8 @@ articleRoutes.delete('/:id', async (c: Context) => {
       return error(c, 'Invalid article ID', 400)
     }
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     await articleService.deleteArticle(id)
 
     return success(c, null, 200, 'Article deleted successfully')
@@ -146,6 +158,8 @@ articleRoutes.post('/:id/like', async (c: Context) => {
       return error(c, 'Invalid article ID', 400)
     }
 
+    const db = getDb()
+    const articleService = new ArticleService(db)
     await articleService.incrementLikeCount(id)
 
     return success(c, null, 200, 'Like count incremented')
