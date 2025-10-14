@@ -9,7 +9,7 @@ import { tagRoutes } from './tag'
 export function createApiRouter() {
   const api = new Hono()
 
-  // Apply detailed logger only for API routes
+  // Apply detailed logger for API routes
   api.use('*', detailedLogger)
 
   // Mount route handlers

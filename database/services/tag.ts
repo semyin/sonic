@@ -1,6 +1,6 @@
 // database/services/tag.ts
 import { eq, desc, inArray } from 'drizzle-orm'
-import type { DrizzleDb } from '../types'
+import { getDb } from '../client'
 import { tags, articleTags, type Tag, type NewTag } from '../schema'
 
 export interface CreateTagInput {
@@ -12,13 +12,12 @@ export interface UpdateTagInput {
 }
 
 export class TagService {
-  constructor(private db: DrizzleDb) {}
-
   /**
    * Get all tags
    */
   async getAllTags(): Promise<Tag[]> {
-    return await this.db
+    const db = getDb()
+    return await db
       .select()
       .from(tags)
       .orderBy(desc(tags.createdAt))
@@ -28,7 +27,8 @@ export class TagService {
    * Get tag by ID
    */
   async getTagById(id: number): Promise<Tag | null> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .select()
       .from(tags)
       .where(eq(tags.id, id))
@@ -41,7 +41,8 @@ export class TagService {
    * Get tag by name
    */
   async getTagByName(name: string): Promise<Tag | null> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .select()
       .from(tags)
       .where(eq(tags.name, name))
@@ -72,11 +73,12 @@ export class TagService {
    * Create a new tag
    */
   async createTag(input: CreateTagInput): Promise<Tag> {
+    const db = getDb()
     const newTag: NewTag = {
       name: input.name,
     }
 
-    const result = await this.db
+    const result = await db
       .insert(tags)
       .values(newTag)
       .returning()
@@ -88,7 +90,8 @@ export class TagService {
    * Update a tag
    */
   async updateTag(id: number, input: UpdateTagInput): Promise<Tag | null> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .update(tags)
       .set({
         ...input,
@@ -104,7 +107,8 @@ export class TagService {
    * Delete a tag
    */
   async deleteTag(id: number): Promise<boolean> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .delete(tags)
       .where(eq(tags.id, id))
       .returning()
@@ -116,7 +120,8 @@ export class TagService {
    * Get tags for an article
    */
   async getTagsForArticle(articleId: number): Promise<Tag[]> {
-    return await this.db
+    const db = getDb()
+    return await db
       .select({
         id: tags.id,
         name: tags.name,

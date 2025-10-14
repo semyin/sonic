@@ -1,6 +1,6 @@
 // database/services/article.ts
 import { eq, desc, and, sql } from 'drizzle-orm'
-import type { DrizzleDb } from '../types'
+import { getDb } from '../client'
 import { articles, articleTags, tags, categories, users, type Article, type NewArticle } from '../schema'
 
 export interface CreateArticleInput {
@@ -35,15 +35,14 @@ export interface ArticleWithRelations extends Omit<Article, 'tags'> {
 }
 
 export class ArticleService {
-  constructor(private db: DrizzleDb) {}
-
   /**
    * Get all published articles with pagination
    */
   async getPublishedArticles(page = 1, pageSize = 10): Promise<ArticleWithRelations[]> {
+    const db = getDb()
     const offset = (page - 1) * pageSize
 
-    return await this.db
+    return await db
       .select({
         id: articles.id,
         title: articles.title,
@@ -83,7 +82,8 @@ export class ArticleService {
    * Get article by ID with full relations
    */
   async getArticleById(id: number): Promise<ArticleWithRelations | null> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .select({
         id: articles.id,
         title: articles.title,
@@ -119,7 +119,7 @@ export class ArticleService {
     if (!result[0]) return null
 
     // Get tags separately
-    const articleTagsResult = await this.db
+    const articleTagsResult = await db
       .select({
         id: tags.id,
         name: tags.name,
@@ -138,6 +138,7 @@ export class ArticleService {
    * Create a new article
    */
   async createArticle(input: CreateArticleInput): Promise<Article> {
+    const db = getDb()
     const newArticle: NewArticle = {
       title: input.title,
       content: input.content,
@@ -150,7 +151,7 @@ export class ArticleService {
       type: input.type ?? 'article',
     }
 
-    const result = await this.db
+    const result = await db
       .insert(articles)
       .values(newArticle)
       .returning()
@@ -169,6 +170,7 @@ export class ArticleService {
    * Update an existing article
    */
   async updateArticle(id: number, input: UpdateArticleInput): Promise<Article | null> {
+    const db = getDb()
     const updateData: any = {
       ...input,
       updatedAt: new Date(),
@@ -177,7 +179,7 @@ export class ArticleService {
     // Remove tagIds from update data as it's handled separately
     delete updateData.tagIds
 
-    const result = await this.db
+    const result = await db
       .update(articles)
       .set(updateData)
       .where(eq(articles.id, id))
@@ -197,7 +199,8 @@ export class ArticleService {
    * Delete an article
    */
   async deleteArticle(id: number): Promise<boolean> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .delete(articles)
       .where(eq(articles.id, id))
       .returning()
@@ -209,7 +212,8 @@ export class ArticleService {
    * Increment view count
    */
   async incrementViewCount(id: number): Promise<void> {
-    await this.db
+    const db = getDb()
+    await db
       .update(articles)
       .set({ viewCount: sql`${articles.viewCount} + 1` })
       .where(eq(articles.id, id))
@@ -219,7 +223,8 @@ export class ArticleService {
    * Increment like count
    */
   async incrementLikeCount(id: number): Promise<void> {
-    await this.db
+    const db = getDb()
+    await db
       .update(articles)
       .set({ likeCount: sql`${articles.likeCount} + 1` })
       .where(eq(articles.id, id))
@@ -229,7 +234,8 @@ export class ArticleService {
    * Get article count
    */
   async getArticleCount(publishedOnly = false): Promise<number> {
-    const result = await this.db
+    const db = getDb()
+    const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(articles)
       .where(publishedOnly ? eq(articles.isPublished, true) : undefined)
@@ -241,9 +247,10 @@ export class ArticleService {
    * Get articles by category
    */
   async getArticlesByCategory(categoryId: number, page = 1, pageSize = 10): Promise<Article[]> {
+    const db = getDb()
     const offset = (page - 1) * pageSize
 
-    return await this.db
+    return await db
       .select()
       .from(articles)
       .where(and(eq(articles.categoryId, categoryId), eq(articles.isPublished, true)))
@@ -256,9 +263,10 @@ export class ArticleService {
    * Get articles by tag
    */
   async getArticlesByTag(tagId: number, page = 1, pageSize = 10): Promise<Article[]> {
+    const db = getDb()
     const offset = (page - 1) * pageSize
 
-    const results = await this.db
+    const results = await db
       .select({
         id: articles.id,
         title: articles.title,
@@ -293,20 +301,22 @@ export class ArticleService {
   private async addTagsToArticle(articleId: number, tagIds: number[]): Promise<void> {
     if (tagIds.length === 0) return
 
+    const db = getDb()
     const values = tagIds.map(tagId => ({
       articleId,
       tagId,
     }))
 
-    await this.db.insert(articleTags).values(values)
+    await db.insert(articleTags).values(values)
   }
 
   /**
    * Replace article tags
    */
   private async replaceArticleTags(articleId: number, tagIds: number[]): Promise<void> {
+    const db = getDb()
     // Delete existing tags
-    await this.db.delete(articleTags).where(eq(articleTags.articleId, articleId))
+    await db.delete(articleTags).where(eq(articleTags.articleId, articleId))
 
     // Add new tags
     if (tagIds.length > 0) {
@@ -318,9 +328,10 @@ export class ArticleService {
    * Get all articles (admin)
    */
   async getAllArticles(page = 1, pageSize = 20): Promise<Article[]> {
+    const db = getDb()
     const offset = (page - 1) * pageSize
 
-    return await this.db
+    return await db
       .select()
       .from(articles)
       .orderBy(desc(articles.createdAt))
@@ -332,7 +343,8 @@ export class ArticleService {
    * Get top articles
    */
   async getTopArticles(): Promise<Article[]> {
-    return await this.db
+    const db = getDb()
+    return await db
       .select()
       .from(articles)
       .where(and(eq(articles.isTop, true), eq(articles.isPublished, true)))
