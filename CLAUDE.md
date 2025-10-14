@@ -11,6 +11,7 @@ This is a blog application built with Vike + React, configured for deployment to
 - **Hono** server for Cloudflare Workers/Pages integration
 - **vike-cloudflare** for Cloudflare-specific optimizations
 - **Drizzle ORM** with PostgreSQL for database management
+- **date-fns** for date formatting and manipulation
 
 ## Development Commands
 
@@ -32,6 +33,7 @@ npm run db:generate  # Generate migration files from schema
 npm run db:migrate   # Run pending migrations
 npm run db:push      # Push schema changes directly (dev only)
 npm run db:studio    # Open Drizzle Studio (database GUI)
+npm run db:stats     # Check database statistics and table counts
 ```
 
 ## Architecture
@@ -59,11 +61,13 @@ npm run db:studio    # Open Drizzle Studio (database GUI)
 /components    - Reusable React components
 /database      - Database layer with Drizzle ORM
   schema.ts    - Complete database schema (15 tables)
-  client.ts    - Database connection configuration
-  article.ts   - Article service with CRUD operations
-  category.ts  - Category management service
-  tag.ts       - Tag management service
+  client.ts    - Database connection configuration with getDb()
   types.ts     - TypeScript type definitions
+  /services    - Database service layer
+    article.ts   - Article service with CRUD operations
+    category.ts  - Category management service
+    tag.ts       - Tag management service
+    index.ts     - Service exports
 /server        - Hono server configuration
   index.ts     - Main server entry point
   /api         - RESTful API endpoints
@@ -71,7 +75,7 @@ npm run db:studio    # Open Drizzle Studio (database GUI)
     article.ts - Article endpoints
     category.ts- Category endpoints
     tag.ts     - Tag endpoints
-/scripts       - Utility scripts (migration, etc.)
+/scripts       - Utility scripts (migration, db stats, etc.)
 /assets        - Static assets
 ```
 
@@ -82,6 +86,15 @@ npm run db:studio    # Open Drizzle Studio (database GUI)
 - **Migrations**: Generated in `database/migrations/` (gitignored)
 - **Configuration**: `drizzle.config.ts` for Drizzle Kit
 - **Platform-agnostic**: Can easily switch between PostgreSQL providers (Supabase, Neon, Railway, etc.)
+- **Connection Management**: Uses `getDb()` function to create fresh DB connections per request (Cloudflare Workers compatible)
+
+#### Database Connection Pattern
+The database client uses a **non-singleton pattern** optimized for Cloudflare Workers:
+- Each request creates a fresh connection via `getDb(env)`
+- Internal connection pooling handled by `postgres` library
+- Configured with `prepare: false` for Supabase Pooler Transaction Mode compatibility
+- Single connection per client (`max: 1`)
+- Auto-closes idle connections after 20 seconds
 
 #### Available Services
 - `ArticleService` - Article CRUD with relations (author, category, tags)
@@ -108,10 +121,9 @@ Core tables:
 #### Database Usage Pattern
 ```typescript
 import { getDb } from '../database/client'
-import { ArticleService } from '../database/article'
-import { CategoryService } from '../database/category'
-import { TagService } from '../database/tag'
+import { ArticleService, CategoryService, TagService } from '../database/services'
 
+// In Cloudflare Workers / API routes
 const db = getDb({ DATABASE_URL: env.DATABASE_URL })
 const articleService = new ArticleService(db)
 const categoryService = new CategoryService(db)
