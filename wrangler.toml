@@ -6,3 +6,9 @@ pages_build_output_dir = "./dist/cloudflare"
 
 # Only needed if your app (or one of your libraries) uses Node.js APIs
 compatibility_flags = ["nodejs_compat"]
+
+# Environment variables for local development
+# For production, set these in Cloudflare Pages dashboard:
+# Settings > Environment variables
+[vars]
+# DATABASE_URL = "postgresql://username:password@host:port/database"

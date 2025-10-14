@@ -134,6 +134,9 @@ dist
 # Cloudflare
 .wrangler/
 
+# Drizzle
+database/migrations/
+
 # Vercel
 .vercel/
 
