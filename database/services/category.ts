@@ -1,7 +1,7 @@
-// database/category.ts
+// database/services/category.ts
 import { eq, desc } from 'drizzle-orm'
-import type { DrizzleDb } from './types'
-import { categories, type Category, type NewCategory } from './schema'
+import type { DrizzleDb } from '../types'
+import { categories, type Category, type NewCategory } from '../schema'
 
 export interface CreateCategoryInput {
   name: string

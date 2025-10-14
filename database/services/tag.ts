@@ -1,7 +1,7 @@
-// database/tag.ts
+// database/services/tag.ts
 import { eq, desc, inArray } from 'drizzle-orm'
-import type { DrizzleDb } from './types'
-import { tags, articleTags, type Tag, type NewTag } from './schema'
+import type { DrizzleDb } from '../types'
+import { tags, articleTags, type Tag, type NewTag } from '../schema'
 
 export interface CreateTagInput {
   name: string

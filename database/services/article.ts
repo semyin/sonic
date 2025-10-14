@@ -1,7 +1,7 @@
-// database/article.ts
+// database/services/article.ts
 import { eq, desc, and, sql } from 'drizzle-orm'
-import type { DrizzleDb } from './types'
-import { articles, articleTags, tags, categories, users, type Article, type NewArticle } from './schema'
+import type { DrizzleDb } from '../types'
+import { articles, articleTags, tags, categories, users, type Article, type NewArticle } from '../schema'
 
 export interface CreateArticleInput {
   title: string

@@ -1,8 +1,9 @@
 // server/api/category.ts
 import { Hono } from 'hono'
 import { db } from '../../database/client'
-import { CategoryService } from '../../database/category'
+import { CategoryService } from '../../database/services'
 import type { Context } from 'hono'
+import { success, error, handleError } from '../utils/response'
 
 export const categoryRoutes = new Hono()
 
@@ -12,16 +13,9 @@ const categoryService = new CategoryService(db)
 categoryRoutes.get('/', async (c: Context) => {
   try {
     const categories = await categoryService.getAllCategories()
-
-    return c.json({
-      success: true,
-      data: categories
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, categories)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -31,30 +25,18 @@ categoryRoutes.get('/:id', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid category ID'
-      }, 400)
+      return error(c, 'Invalid category ID', 400)
     }
 
     const category = await categoryService.getCategoryById(id)
 
     if (!category) {
-      return c.json({
-        success: false,
-        error: 'Category not found'
-      }, 404)
+      return error(c, 'Category not found', 404)
     }
 
-    return c.json({
-      success: true,
-      data: category
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, category)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -62,18 +44,10 @@ categoryRoutes.get('/:id', async (c: Context) => {
 categoryRoutes.post('/', async (c: Context) => {
   try {
     const body = await c.req.json()
-
     const category = await categoryService.createCategory(body)
-
-    return c.json({
-      success: true,
-      data: category
-    }, 201)
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, category, 201)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -84,30 +58,18 @@ categoryRoutes.put('/:id', async (c: Context) => {
     const body = await c.req.json()
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid category ID'
-      }, 400)
+      return error(c, 'Invalid category ID', 400)
     }
 
     const category = await categoryService.updateCategory(id, body)
 
     if (!category) {
-      return c.json({
-        success: false,
-        error: 'Category not found'
-      }, 404)
+      return error(c, 'Category not found', 404)
     }
 
-    return c.json({
-      success: true,
-      data: category
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, category)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -117,22 +79,12 @@ categoryRoutes.delete('/:id', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid category ID'
-      }, 400)
+      return error(c, 'Invalid category ID', 400)
     }
 
     await categoryService.deleteCategory(id)
-
-    return c.json({
-      success: true,
-      message: 'Category deleted successfully'
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, { message: 'Category deleted successfully' })
+  } catch (err) {
+    return handleError(c, err)
   }
 })

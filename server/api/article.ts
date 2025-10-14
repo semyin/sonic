@@ -1,8 +1,9 @@
 // server/api/article.ts
 import { Hono } from 'hono'
 import { db } from '../../database/client'
-import { ArticleService } from '../../database/article'
+import { ArticleService } from '../../database/services'
 import type { Context } from 'hono'
+import { success, error, handleError } from '../utils/response'
 
 export const articleRoutes = new Hono()
 
@@ -17,23 +18,17 @@ articleRoutes.get('/', async (c: Context) => {
     const articles = await articleService.getPublishedArticles(page, pageSize)
     const total = await articleService.getArticleCount(true)
 
-    return c.json({
-      success: true,
-      data: {
-        articles,
-        pagination: {
-          page,
-          pageSize,
-          total,
-          totalPages: Math.ceil(total / pageSize)
-        }
+    return success(c, {
+      articles,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize)
       }
     })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -43,33 +38,21 @@ articleRoutes.get('/:id', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid article ID'
-      }, 400)
+      return error(c, 'Invalid article ID', 400)
     }
 
     const article = await articleService.getArticleById(id)
 
     if (!article) {
-      return c.json({
-        success: false,
-        error: 'Article not found'
-      }, 404)
+      return error(c, 'Article not found', 404)
     }
 
     // Increment view count
     await articleService.incrementViewCount(id)
 
-    return c.json({
-      success: true,
-      data: article
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, article)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -81,26 +64,17 @@ articleRoutes.get('/category/:categoryId', async (c: Context) => {
     const pageSize = Number(c.req.query('pageSize')) || 10
 
     if (isNaN(categoryId)) {
-      return c.json({
-        success: false,
-        error: 'Invalid category ID'
-      }, 400)
+      return error(c, 'Invalid category ID', 400)
     }
 
     const articles = await articleService.getArticlesByCategory(categoryId, page, pageSize)
 
-    return c.json({
-      success: true,
-      data: {
-        articles,
-        pagination: { page, pageSize }
-      }
+    return success(c, {
+      articles,
+      pagination: { page, pageSize }
     })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -112,26 +86,17 @@ articleRoutes.get('/tag/:tagId', async (c: Context) => {
     const pageSize = Number(c.req.query('pageSize')) || 10
 
     if (isNaN(tagId)) {
-      return c.json({
-        success: false,
-        error: 'Invalid tag ID'
-      }, 400)
+      return error(c, 'Invalid tag ID', 400)
     }
 
     const articles = await articleService.getArticlesByTag(tagId, page, pageSize)
 
-    return c.json({
-      success: true,
-      data: {
-        articles,
-        pagination: { page, pageSize }
-      }
+    return success(c, {
+      articles,
+      pagination: { page, pageSize }
     })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -142,15 +107,9 @@ articleRoutes.post('/', async (c: Context) => {
 
     const article = await articleService.createArticle(body)
 
-    return c.json({
-      success: true,
-      data: article
-    }, 201)
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, article, 201)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -161,30 +120,18 @@ articleRoutes.put('/:id', async (c: Context) => {
     const body = await c.req.json()
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid article ID'
-      }, 400)
+      return error(c, 'Invalid article ID', 400)
     }
 
     const article = await articleService.updateArticle(id, body)
 
     if (!article) {
-      return c.json({
-        success: false,
-        error: 'Article not found'
-      }, 404)
+      return error(c, 'Article not found', 404)
     }
 
-    return c.json({
-      success: true,
-      data: article
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, article)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -194,23 +141,14 @@ articleRoutes.delete('/:id', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid article ID'
-      }, 400)
+      return error(c, 'Invalid article ID', 400)
     }
 
     await articleService.deleteArticle(id)
 
-    return c.json({
-      success: true,
-      message: 'Article deleted successfully'
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, { message: 'Article deleted successfully' })
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -220,22 +158,13 @@ articleRoutes.post('/:id/like', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid article ID'
-      }, 400)
+      return error(c, 'Invalid article ID', 400)
     }
 
     await articleService.incrementLikeCount(id)
 
-    return c.json({
-      success: true,
-      message: 'Like count incremented'
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, { message: 'Like count incremented' })
+  } catch (err) {
+    return handleError(c, err)
   }
 })

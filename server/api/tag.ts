@@ -1,8 +1,9 @@
 // server/api/tag.ts
 import { Hono } from 'hono'
 import { db } from '../../database/client'
-import { TagService } from '../../database/tag'
+import { TagService } from '../../database/services'
 import type { Context } from 'hono'
+import { success, error, handleError } from '../utils/response'
 
 export const tagRoutes = new Hono()
 
@@ -12,16 +13,9 @@ const tagService = new TagService(db)
 tagRoutes.get('/', async (c: Context) => {
   try {
     const tags = await tagService.getAllTags()
-
-    return c.json({
-      success: true,
-      data: tags
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, tags)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -31,30 +25,18 @@ tagRoutes.get('/:id', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid tag ID'
-      }, 400)
+      return error(c, 'Invalid tag ID', 400)
     }
 
     const tag = await tagService.getTagById(id)
 
     if (!tag) {
-      return c.json({
-        success: false,
-        error: 'Tag not found'
-      }, 404)
+      return error(c, 'Tag not found', 404)
     }
 
-    return c.json({
-      success: true,
-      data: tag
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, tag)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -62,25 +44,15 @@ tagRoutes.get('/:id', async (c: Context) => {
 tagRoutes.get('/name/:name', async (c: Context) => {
   try {
     const name = c.req.param('name')
-
     const tag = await tagService.getTagByName(name)
 
     if (!tag) {
-      return c.json({
-        success: false,
-        error: 'Tag not found'
-      }, 404)
+      return error(c, 'Tag not found', 404)
     }
 
-    return c.json({
-      success: true,
-      data: tag
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, tag)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -88,18 +60,10 @@ tagRoutes.get('/name/:name', async (c: Context) => {
 tagRoutes.post('/', async (c: Context) => {
   try {
     const body = await c.req.json()
-
     const tag = await tagService.createTag(body)
-
-    return c.json({
-      success: true,
-      data: tag
-    }, 201)
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, tag, 201)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -110,23 +74,13 @@ tagRoutes.post('/bulk', async (c: Context) => {
     const { names } = body
 
     if (!Array.isArray(names)) {
-      return c.json({
-        success: false,
-        error: 'names must be an array of strings'
-      }, 400)
+      return error(c, 'names must be an array of strings', 400)
     }
 
     const tags = await tagService.getOrCreateTags(names)
-
-    return c.json({
-      success: true,
-      data: tags
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, tags)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -137,30 +91,18 @@ tagRoutes.put('/:id', async (c: Context) => {
     const body = await c.req.json()
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid tag ID'
-      }, 400)
+      return error(c, 'Invalid tag ID', 400)
     }
 
     const tag = await tagService.updateTag(id, body)
 
     if (!tag) {
-      return c.json({
-        success: false,
-        error: 'Tag not found'
-      }, 404)
+      return error(c, 'Tag not found', 404)
     }
 
-    return c.json({
-      success: true,
-      data: tag
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, tag)
+  } catch (err) {
+    return handleError(c, err)
   }
 })
 
@@ -170,22 +112,12 @@ tagRoutes.delete('/:id', async (c: Context) => {
     const id = Number(c.req.param('id'))
 
     if (isNaN(id)) {
-      return c.json({
-        success: false,
-        error: 'Invalid tag ID'
-      }, 400)
+      return error(c, 'Invalid tag ID', 400)
     }
 
     await tagService.deleteTag(id)
-
-    return c.json({
-      success: true,
-      message: 'Tag deleted successfully'
-    })
-  } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, 500)
+    return success(c, { message: 'Tag deleted successfully' })
+  } catch (err) {
+    return handleError(c, err)
   }
 })
