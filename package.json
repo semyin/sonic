@@ -1,8 +1,9 @@
 {
   "scripts": {
     "dev": "vike dev",
-    "build": "vike build && wrangler pages dev",
-    "preview": "vike preview && wrangler pages deploy"
+    "build": "vike build",
+    "pages-dev": "vike build && wrangler pages dev",
+    "pages-deploy": "vike build && wrangler pages deploy"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.2",
