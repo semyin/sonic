@@ -13,7 +13,11 @@ function startServer() {
   app.route('/api', api)
 
   // Apply Vike middleware (must be after API routes)
-  apply(app)
+  apply(app, {
+    pageContext: {
+      'msg': 'Hello Vike Cloudflare Workers!'
+    }
+  })
 
   return serve(app, { port: 3000 })
 }

@@ -16,5 +16,6 @@ export default {
 
   extends: [vikeReact, vikeCloudflare],
 
-  server: 'server/index.ts'
+  server: 'server/index.ts',
+  passToClient: ['msg'],
 } satisfies Config;
