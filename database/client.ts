@@ -12,7 +12,7 @@ export interface DbEnv {
   DATABASE_URL: string
 }
 
-let dbInstance: DrizzleDb | null = null
+let clientInstance: postgres.Sql | null = null
 
 export function getDb(env?: DbEnv): DrizzleDb {
   const databaseUrl = env?.DATABASE_URL || process.env.DATABASE_URL
@@ -21,18 +21,29 @@ export function getDb(env?: DbEnv): DrizzleDb {
     throw new Error('DATABASE_URL is not set')
   }
 
-  // Reuse connection in development for better performance
-  if (!dbInstance) {
-    const client = postgres(databaseUrl)
-    dbInstance = drizzle(client, { schema })
+  // For Cloudflare Workers with Supabase Pooler: use transaction mode settings
+  if (!clientInstance) {
+    clientInstance = postgres(databaseUrl, {
+      prepare: false,        // CRITICAL: Disable prepared statements for pooler transaction mode
+      max: 1,                // Single connection for edge runtime
+      idle_timeout: 20,      // Close idle connections after 20s
+      connect_timeout: 10,   // Connection timeout
+      max_lifetime: 60 * 30, // Max connection lifetime: 30 minutes
+    })
   }
 
-  return dbInstance
+  return drizzle(clientInstance, { schema })
 }
 
 // For creating a fresh connection (useful in some edge cases)
 export function createDb(databaseUrl: string): DrizzleDb {
-  const client = postgres(databaseUrl)
+  const client = postgres(databaseUrl, {
+    prepare: false,
+    max: 1,
+    idle_timeout: 20,
+    connect_timeout: 10,
+    max_lifetime: 60 * 30,
+  })
   return drizzle(client, { schema })
 }
 
