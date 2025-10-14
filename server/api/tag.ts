@@ -116,7 +116,7 @@ tagRoutes.delete('/:id', async (c: Context) => {
     }
 
     await tagService.deleteTag(id)
-    return success(c, { message: 'Tag deleted successfully' })
+    return success(c, null, 200, 'Tag deleted successfully')
   } catch (err) {
     return handleError(c, err)
   }

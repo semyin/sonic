@@ -83,7 +83,7 @@ categoryRoutes.delete('/:id', async (c: Context) => {
     }
 
     await categoryService.deleteCategory(id)
-    return success(c, { message: 'Category deleted successfully' })
+    return success(c, null, 200, 'Category deleted successfully')
   } catch (err) {
     return handleError(c, err)
   }

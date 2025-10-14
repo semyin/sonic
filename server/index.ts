@@ -4,15 +4,11 @@ import { Hono } from 'hono'
 import { apply } from 'vike-cloudflare/hono'
 import { serve } from 'vike-cloudflare/hono/serve'
 import { createApiRouter } from './api'
-import { logger } from './middleware/logger'
 
 function startServer() {
   const app = new Hono()
 
-  // Apply logger middleware globally
-  app.use('*', logger)
-
-  // Mount API routes
+  // Mount API routes (with detailed logger inside)
   const api = createApiRouter()
   app.route('/api', api)
 

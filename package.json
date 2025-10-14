@@ -13,6 +13,7 @@
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.2",
     "cross-env": "^10.1.0",
+    "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.6",
     "hono": "^4.9.12",
     "postgres": "^3.4.7",

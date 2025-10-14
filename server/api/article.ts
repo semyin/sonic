@@ -16,17 +16,8 @@ articleRoutes.get('/', async (c: Context) => {
     const pageSize = Number(c.req.query('pageSize')) || 10
 
     const articles = await articleService.getPublishedArticles(page, pageSize)
-    const total = await articleService.getArticleCount(true)
 
-    return success(c, {
-      articles,
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
-      }
-    })
+    return success(c, articles)
   } catch (err) {
     return handleError(c, err)
   }
@@ -69,10 +60,7 @@ articleRoutes.get('/category/:categoryId', async (c: Context) => {
 
     const articles = await articleService.getArticlesByCategory(categoryId, page, pageSize)
 
-    return success(c, {
-      articles,
-      pagination: { page, pageSize }
-    })
+    return success(c, articles)
   } catch (err) {
     return handleError(c, err)
   }
@@ -91,10 +79,7 @@ articleRoutes.get('/tag/:tagId', async (c: Context) => {
 
     const articles = await articleService.getArticlesByTag(tagId, page, pageSize)
 
-    return success(c, {
-      articles,
-      pagination: { page, pageSize }
-    })
+    return success(c, articles)
   } catch (err) {
     return handleError(c, err)
   }
@@ -146,7 +131,7 @@ articleRoutes.delete('/:id', async (c: Context) => {
 
     await articleService.deleteArticle(id)
 
-    return success(c, { message: 'Article deleted successfully' })
+    return success(c, null, 200, 'Article deleted successfully')
   } catch (err) {
     return handleError(c, err)
   }
@@ -163,7 +148,7 @@ articleRoutes.post('/:id/like', async (c: Context) => {
 
     await articleService.incrementLikeCount(id)
 
-    return success(c, { message: 'Like count incremented' })
+    return success(c, null, 200, 'Like count incremented')
   } catch (err) {
     return handleError(c, err)
   }
