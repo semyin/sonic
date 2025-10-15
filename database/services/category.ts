@@ -2,6 +2,7 @@
 import { eq, desc } from 'drizzle-orm'
 import { getDb } from '../client'
 import { categories, type Category, type NewCategory } from '../schema'
+import { serialize, serializeArray } from '../serializer'
 
 export interface CreateCategoryInput {
   name: string
@@ -19,10 +20,12 @@ export class CategoryService {
    */
   async getAllCategories(): Promise<Category[]> {
     const db = getDb()
-    return await db
+    const results = await db
       .select()
       .from(categories)
       .orderBy(desc(categories.createdAt))
+
+    return serializeArray(results)
   }
 
   /**
@@ -36,7 +39,7 @@ export class CategoryService {
       .where(eq(categories.id, id))
       .limit(1)
 
-    return result[0] || null
+    return serialize(result[0] || null)
   }
 
   /**
@@ -50,7 +53,7 @@ export class CategoryService {
       .where(eq(categories.name, name))
       .limit(1)
 
-    return result[0] || null
+    return serialize(result[0] || null)
   }
 
   /**
@@ -68,7 +71,7 @@ export class CategoryService {
       .values(newCategory)
       .returning()
 
-    return result[0]
+    return serialize(result[0])!
   }
 
   /**
@@ -85,7 +88,7 @@ export class CategoryService {
       .where(eq(categories.id, id))
       .returning()
 
-    return result[0] || null
+    return serialize(result[0] || null)
   }
 
   /**

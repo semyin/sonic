@@ -2,6 +2,7 @@
 import { eq, desc, inArray } from 'drizzle-orm'
 import { getDb } from '../client'
 import { tags, articleTags, type Tag, type NewTag } from '../schema'
+import { serialize, serializeArray } from '../serializer'
 
 export interface CreateTagInput {
   name: string
@@ -17,10 +18,12 @@ export class TagService {
    */
   async getAllTags(): Promise<Tag[]> {
     const db = getDb()
-    return await db
+    const results = await db
       .select()
       .from(tags)
       .orderBy(desc(tags.createdAt))
+
+    return serializeArray(results)
   }
 
   /**
@@ -34,7 +37,7 @@ export class TagService {
       .where(eq(tags.id, id))
       .limit(1)
 
-    return result[0] || null
+    return serialize(result[0] || null)
   }
 
   /**
@@ -48,7 +51,7 @@ export class TagService {
       .where(eq(tags.name, name))
       .limit(1)
 
-    return result[0] || null
+    return serialize(result[0] || null)
   }
 
   /**
@@ -83,7 +86,7 @@ export class TagService {
       .values(newTag)
       .returning()
 
-    return result[0]
+    return serialize(result[0])!
   }
 
   /**
@@ -100,7 +103,7 @@ export class TagService {
       .where(eq(tags.id, id))
       .returning()
 
-    return result[0] || null
+    return serialize(result[0] || null)
   }
 
   /**
@@ -121,7 +124,7 @@ export class TagService {
    */
   async getTagsForArticle(articleId: number): Promise<Tag[]> {
     const db = getDb()
-    return await db
+    const results = await db
       .select({
         id: tags.id,
         name: tags.name,
@@ -131,5 +134,7 @@ export class TagService {
       .from(articleTags)
       .innerJoin(tags, eq(articleTags.tagId, tags.id))
       .where(eq(articleTags.articleId, articleId))
+
+    return serializeArray(results)
   }
 }

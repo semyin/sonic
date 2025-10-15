@@ -2,6 +2,7 @@
 import { eq, desc, and, sql } from 'drizzle-orm'
 import { getDb } from '../client'
 import { articles, articleTags, tags, categories, users, type Article, type NewArticle } from '../schema'
+import { serialize, serializeArray } from '../serializer'
 
 export interface CreateArticleInput {
   title: string
@@ -42,7 +43,7 @@ export class ArticleService {
     const db = getDb()
     const offset = (page - 1) * pageSize
 
-    return await db
+    const results = await db
       .select({
         id: articles.id,
         title: articles.title,
@@ -75,7 +76,9 @@ export class ArticleService {
       .where(eq(articles.isPublished, true))
       .orderBy(desc(articles.isTop), desc(articles.createdAt))
       .limit(pageSize)
-      .offset(offset) as ArticleWithRelations[]
+      .offset(offset)
+
+    return serializeArray(results as ArticleWithRelations[])
   }
 
   /**
@@ -128,10 +131,10 @@ export class ArticleService {
       .innerJoin(tags, eq(articleTags.tagId, tags.id))
       .where(eq(articleTags.articleId, id))
 
-    return {
+    return serialize({
       ...result[0],
       tags: articleTagsResult,
-    } as ArticleWithRelations
+    } as ArticleWithRelations)
   }
 
   /**
@@ -163,7 +166,7 @@ export class ArticleService {
       await this.addTagsToArticle(article.id, input.tagIds)
     }
 
-    return article
+    return serialize(article)!
   }
 
   /**
@@ -192,7 +195,7 @@ export class ArticleService {
       await this.replaceArticleTags(id, input.tagIds)
     }
 
-    return result[0]
+    return serialize(result[0])
   }
 
   /**
@@ -250,13 +253,15 @@ export class ArticleService {
     const db = getDb()
     const offset = (page - 1) * pageSize
 
-    return await db
+    const results = await db
       .select()
       .from(articles)
       .where(and(eq(articles.categoryId, categoryId), eq(articles.isPublished, true)))
       .orderBy(desc(articles.createdAt))
       .limit(pageSize)
       .offset(offset)
+
+    return serializeArray(results)
   }
 
   /**
@@ -292,7 +297,7 @@ export class ArticleService {
       .limit(pageSize)
       .offset(offset)
 
-    return results as Article[]
+    return serializeArray(results as Article[])
   }
 
   /**
@@ -331,12 +336,14 @@ export class ArticleService {
     const db = getDb()
     const offset = (page - 1) * pageSize
 
-    return await db
+    const results = await db
       .select()
       .from(articles)
       .orderBy(desc(articles.createdAt))
       .limit(pageSize)
       .offset(offset)
+
+    return serializeArray(results)
   }
 
   /**
@@ -344,10 +351,12 @@ export class ArticleService {
    */
   async getTopArticles(): Promise<Article[]> {
     const db = getDb()
-    return await db
+    const results = await db
       .select()
       .from(articles)
       .where(and(eq(articles.isTop, true), eq(articles.isPublished, true)))
       .orderBy(desc(articles.createdAt))
+
+    return serializeArray(results)
   }
 }
