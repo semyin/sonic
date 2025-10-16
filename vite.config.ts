@@ -4,6 +4,11 @@ import vike from "vike/plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": __dirname,
+    },
+  },
   plugins: [vike(), react(), tailwindcss()],
   build: {
     target: "es2022",
