@@ -18,6 +18,9 @@ export interface DbEnv {
 export function getDb(env?: DbEnv): DrizzleDb {
   const databaseUrl = env?.DATABASE_URL || process.env.DATABASE_URL
 
+  console.log('DATABASE_URL:', databaseUrl);
+  
+
   if (!databaseUrl) {
     throw new Error('DATABASE_URL is not set')
   }
