@@ -18,6 +18,8 @@ articleRoutes.get('/', async (c: Context) => {
 
     return success(c, articles)
   } catch (err) {
+    console.log(err);
+    
     return handleError(c, err)
   }
 })

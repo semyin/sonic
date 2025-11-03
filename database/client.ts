@@ -32,7 +32,7 @@ export function getDb(env?: DbEnv): DrizzleDb {
     max: 1,                // Single connection per client
     fetch_types: false,    // Disable automatic type fetching for better performance
     idle_timeout: 20,      // Close idle connections after 20s
-    connect_timeout: 10,   // Connection timeout 10s
+    connect_timeout: 30,   // Connection timeout 30s
   })
 
   return drizzle(client, { schema })
