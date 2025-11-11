@@ -1,6 +1,6 @@
 // server/api/index.ts
 import { Hono } from 'hono'
-import { detailedLogger } from '../middleware/logger-detailed'
+import { logger } from '../middleware/logger-detailed'
 import { error } from '../utils/response'
 import { articleRoutes } from './article'
 import { categoryRoutes } from './category'
@@ -10,7 +10,7 @@ export function createApiRouter() {
   const api = new Hono()
 
   // Apply detailed logger for API routes
-  api.use('*', detailedLogger)
+  api.use('*', logger)
 
   // Mount route handlers
   api.route('/articles', articleRoutes)
