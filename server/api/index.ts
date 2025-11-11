@@ -1,6 +1,6 @@
 // server/api/index.ts
 import { Hono } from 'hono'
-import { logger } from '../middleware/logger-detailed'
+import { logger } from '../middleware/logger'
 import { error } from '../utils/response'
 import { articleRoutes } from './article'
 import { categoryRoutes } from './category'
