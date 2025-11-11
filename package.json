@@ -11,6 +11,7 @@
     "db:stats": "tsx scripts/check-db-stats.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.81.0",
     "@vitejs/plugin-react": "^5.0.2",
     "cross-env": "^10.1.0",
     "date-fns": "^4.1.0",
