@@ -15,6 +15,6 @@ app.get('/', async (c) => {
       .eq('is_publishedd', true)
       .order('created_at', { ascending: false })
       .range((page - 1) * pageSize, page * pageSize - 1)
-    throw new Error( 'is_publishedd must be true')
+    // throw new Error( 'is_publishedd must be true')
     return c.json(data)
 })
