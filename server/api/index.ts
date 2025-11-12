@@ -2,7 +2,7 @@ export { createApiRouter }
 
 import { logger } from '@/server/middleware/logger'
 import { error } from '../utils/response'
-import { articleRoutes } from './article'
+import { articleRoutes } from './article/index'
 import { categoryRoutes } from './category'
 import { tagRoutes } from './tag'
 import { healthRouter } from './health'

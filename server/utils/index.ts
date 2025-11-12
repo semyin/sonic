@@ -1,8 +1,9 @@
+import { Database } from '@/supabase'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Hono } from 'hono'
 
 type Variables = {
-  supabase: SupabaseClient
+  supabase: SupabaseClient<Database>
 }
 
 export const createApp = () => {
