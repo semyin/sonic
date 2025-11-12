@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 
 export interface SuccessResponse<T = any> {
   code: number
@@ -81,7 +82,7 @@ export const result = {
         for (const key of timeFields) {
           if (result[key]) {
             try {
-              result[key] = format(new Date(result[key]), 'yyyy-MM-dd HH:mm:ss')
+              result[key] = formatInTimeZone(new Date(result[key]), 'Asia/Shanghai', 'yyyy-MM-dd HH:mm:ss')
             } catch {}
           }
         }
