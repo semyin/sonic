@@ -1,11 +1,11 @@
-import { Hono } from 'hono'
 import { apply } from 'vike-cloudflare/hono'
 import { serve } from 'vike-cloudflare/hono/serve'
 import { createApiRouter } from './api'
+import { createApp } from './utils'
 
 function startServer() {
 
-  const app = new Hono()
+  const app = createApp()
 
   // Mount API routes (with detailed logger inside)
   const api = createApiRouter()

@@ -1,22 +1,17 @@
 export { createApiRouter }
 
-import { Hono } from 'hono'
 import { logger } from '@/server/middleware/logger'
 import { error } from '../utils/response'
 import { articleRoutes } from './article'
 import { categoryRoutes } from './category'
 import { tagRoutes } from './tag'
 import { healthRouter } from './health'
-import { SupabaseClient } from '@supabase/supabase-js'
 import { initSupabase } from '@/supabase'
-
-type Variables = {
-  supabase: SupabaseClient
-}
+import { createApp } from '../utils'
 
 function createApiRouter() {
 
-  const app = new Hono<{ Variables: Variables }>()
+  const app = createApp()
 
   // Apply logger for API routes
   app.use('*', logger)

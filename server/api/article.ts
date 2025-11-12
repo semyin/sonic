@@ -1,20 +1,23 @@
-// server/api/article.ts
-import { Hono } from 'hono'
-import type { Context } from 'hono'
 import { success, error, handleError } from '../utils/response'
 import { ArticleService } from '../../database/services'
+import { createApp } from '../utils'
 
-export const articleRoutes = new Hono()
+export const articleRoutes = createApp()
 
 const articleService = new ArticleService()
 
-// GET /api/articles - Get published articles with pagination
-articleRoutes.get('/', async (c: Context) => {
+articleRoutes.get('/', async (c) => {
   try {
     const page = Number(c.req.query('page')) || 1
     const pageSize = Number(c.req.query('pageSize')) || 10
+    const supabase = c.get('supabase')
 
-    const articles = await articleService.getPublishedArticles(page, pageSize)
+    const articles = await supabase
+      .from('article')
+      .select('*')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .range((page - 1) * pageSize, page * pageSize - 1)
 
     return success(c, articles)
   } catch (err) {
@@ -25,7 +28,7 @@ articleRoutes.get('/', async (c: Context) => {
 })
 
 // GET /api/articles/:id - Get article by ID with relations
-articleRoutes.get('/:id', async (c: Context) => {
+articleRoutes.get('/:id', async (c) => {
   try {
     const id = Number(c.req.param('id'))
 
@@ -33,7 +36,13 @@ articleRoutes.get('/:id', async (c: Context) => {
       return error(c, 'Invalid article ID', 400)
     }
 
-    const article = await articleService.getArticleById(id)
+    const supabase = c.get('supabase')
+
+    const { data: article, error: err } = await supabase
+      .from('article')
+      .select('*')
+      .eq('id', id)
+      .single()
 
     if (!article) {
       return error(c, 'Article not found', 404)
@@ -49,7 +58,7 @@ articleRoutes.get('/:id', async (c: Context) => {
 })
 
 // GET /api/articles/category/:categoryId - Get articles by category
-articleRoutes.get('/category/:categoryId', async (c: Context) => {
+articleRoutes.get('/category/:categoryId', async (c) => {
   try {
     const categoryId = Number(c.req.param('categoryId'))
     const page = Number(c.req.query('page')) || 1
@@ -68,7 +77,7 @@ articleRoutes.get('/category/:categoryId', async (c: Context) => {
 })
 
 // GET /api/articles/tag/:tagId - Get articles by tag
-articleRoutes.get('/tag/:tagId', async (c: Context) => {
+articleRoutes.get('/tag/:tagId', async (c) => {
   try {
     const tagId = Number(c.req.param('tagId'))
     const page = Number(c.req.query('page')) || 1
@@ -78,7 +87,14 @@ articleRoutes.get('/tag/:tagId', async (c: Context) => {
       return error(c, 'Invalid tag ID', 400)
     }
 
-    const articles = await articleService.getArticlesByTag(tagId, page, pageSize)
+    const supabase = c.get('supabase')
+
+    const articles = await supabase
+      .from('article')
+      .select('*')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .range((page - 1) * pageSize, page * pageSize - 1)
 
     return success(c, articles)
   } catch (err) {
@@ -87,7 +103,7 @@ articleRoutes.get('/tag/:tagId', async (c: Context) => {
 })
 
 // POST /api/articles - Create new article
-articleRoutes.post('/', async (c: Context) => {
+articleRoutes.post('/', async (c) => {
   try {
     const body = await c.req.json()
 
@@ -100,7 +116,7 @@ articleRoutes.post('/', async (c: Context) => {
 })
 
 // PUT /api/articles/:id - Update article
-articleRoutes.put('/:id', async (c: Context) => {
+articleRoutes.put('/:id', async (c) => {
   try {
     const id = Number(c.req.param('id'))
     const body = await c.req.json()
@@ -122,7 +138,7 @@ articleRoutes.put('/:id', async (c: Context) => {
 })
 
 // DELETE /api/articles/:id - Delete article
-articleRoutes.delete('/:id', async (c: Context) => {
+articleRoutes.delete('/:id', async (c) => {
   try {
     const id = Number(c.req.param('id'))
 
@@ -139,7 +155,7 @@ articleRoutes.delete('/:id', async (c: Context) => {
 })
 
 // POST /api/articles/:id/like - Increment like count
-articleRoutes.post('/:id/like', async (c: Context) => {
+articleRoutes.post('/:id/like', async (c) => {
   try {
     const id = Number(c.req.param('id'))
 

@@ -1,11 +1,11 @@
 export { app as healthRouter }
 
-import { Hono } from 'hono'
+import { createApp } from '@/server/utils'
 
-export const app = new Hono()
+export const app = createApp()  
 
 app.get('', (c) => {
-
+  
   return c.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
