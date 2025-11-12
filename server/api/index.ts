@@ -1,13 +1,13 @@
 export { createApiRouter }
 
 import { logger } from '@/server/middleware/logger'
-import { error } from '../utils/response'
-import { articleRoutes } from './article/index'
+import { articleRoute } from './article/article.route'
 import { categoryRoutes } from './category'
 import { tagRoutes } from './tag'
-import { healthRouter } from './health'
+import { healthRouter } from './health/health.route'
 import { initSupabase } from '@/supabase'
 import { createApp } from '../utils'
+import { result } from '../utils/response'
 
 function createApiRouter() {
 
@@ -23,25 +23,19 @@ function createApiRouter() {
   })
 
   // Mount route handlers
-  app.route('/articles', articleRoutes)
+  app.route('/articles', articleRoute)
   app.route('/categories', categoryRoutes)
   app.route('/tags', tagRoutes)
   app.route('/health', healthRouter)
 
   // 404 handler for API routes - must be last
   app.get('*', (c) => {
-    return c.json({
-      status: 404,
-      statusText: `API endpoint not found: ${c.req.method} ${c.req.path}`
-    }, 404)
+    return result.error(c, `API endpoint not found: ${c.req.method} ${c.req.path}`, 404)
   })
 
   app.onError((err, c) => {
     console.error('API Error:', err)
-    return c.json({
-      status: 500,
-      statusText: err.message || 'Internal Server Error'
-    }, 500)
+    return result.error(c, err.message || 'Internal Server Error', 500)
   })
 
   return app

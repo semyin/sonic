@@ -1,6 +1,7 @@
-export { app as articleRoutes }
+export { app as articleRoute }
 
 import { createApp } from '@/server/utils'
+import { result } from '@/server/utils/response'
 
 const app = createApp()
 
@@ -9,11 +10,12 @@ app.get('/', async (c) => {
   const pageSize = Number(c.req.query('pageSize')) || 10
   const supabase = c.get('supabase')
 
-  const data = await supabase
+  const response = await supabase
     .from('article')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('is_published', true)
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1)
-  return c.json(data)
+
+  return result.from(c, response)
 })
