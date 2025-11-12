@@ -12,9 +12,8 @@ app.get('/', async (c) => {
     const data = await supabase
       .from('article')
       .select('*')
-      .eq('is_publishedd', true)
+      .eq('is_published', true)
       .order('created_at', { ascending: false })
       .range((page - 1) * pageSize, page * pageSize - 1)
-    // throw new Error( 'is_publishedd must be true')
     return c.json(data)
 })

@@ -30,7 +30,18 @@ function createApiRouter() {
 
   // 404 handler for API routes - must be last
   app.get('*', (c) => {
-    return error(c, `API endpoint not found: ${c.req.method} ${c.req.path}`, 404)
+    return c.json({
+      status: 404,
+      statusText: `API endpoint not found: ${c.req.method} ${c.req.path}`
+    }, 404)
+  })
+
+  app.onError((err, c) => {
+    console.error('API Error:', err)
+    return c.json({
+      status: 500,
+      statusText: err.message || 'Internal Server Error'
+    }, 500)
   })
 
   return app
