@@ -23,7 +23,9 @@ app.get('/:id', async (c) => {
 
   const response = await supabase
     .from('article')
-    .select('*, category(id, name, description, created_at, updated_at, emoji)')
+    .select(`*, 
+      category(id, name, description, created_at, updated_at, emoji), 
+      tags:tag(id, name, img_url, created_at, updated_at)`)
     .eq('id', id)
     .single()
 
