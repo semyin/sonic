@@ -21,7 +21,10 @@ app.get('/:id', async (c) => {
 
   const response = await supabase
     .from('category')
-    .select('*')
+    .select(`
+      *,
+      articles:article(id, title, content, category_id, created_at, updated_at)
+    `)
     .eq('id', id)
     .single()
 
