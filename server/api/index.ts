@@ -20,10 +20,11 @@ function createApiRouter() {
 
   app.use('*', async (c, next) => {
     const accessToken = getCookie(c, 'access_token')
+    const Authorization = accessToken ? `Bearer ${accessToken}` : ''
     const supabase = initSupabase({
       global: {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization,
         },
       },
     })  
