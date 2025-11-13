@@ -107,7 +107,7 @@ export type Database = {
       }
       brief: {
         Row: {
-          author_id: number
+          author_id: string
           comment_count: number
           content: string
           created_at: string
@@ -118,7 +118,7 @@ export type Database = {
           view_count: number
         }
         Insert: {
-          author_id: number
+          author_id?: string
           comment_count?: number
           content: string
           created_at?: string
@@ -129,7 +129,7 @@ export type Database = {
           view_count?: number
         }
         Update: {
-          author_id?: number
+          author_id?: string
           comment_count?: number
           content?: string
           created_at?: string
@@ -139,20 +139,13 @@ export type Database = {
           updated_at?: string
           view_count?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "brief_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       category: {
         Row: {
           created_at: string
           description: string | null
+          emoji: string | null
           id: number
           name: string
           updated_at: string
@@ -160,6 +153,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          emoji?: string | null
           id?: number
           name: string
           updated_at?: string
@@ -167,95 +161,39 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          emoji?: string | null
           id?: number
           name?: string
           updated_at?: string
         }
         Relationships: []
       }
-      comment: {
+      config: {
         Row: {
-          content: string
-          created_at: string
+          copyright: string | null
+          description: string | null
+          icp: string | null
           id: number
-          parent_comment_id: number | null
-          target_id: number
-          target_type: Database["public"]["Enums"]["target_type"]
-          updated_at: string
-          user_id: number
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: number
-          parent_comment_id?: number | null
-          target_id: number
-          target_type: Database["public"]["Enums"]["target_type"]
-          updated_at?: string
-          user_id: number
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: number
-          parent_comment_id?: number | null
-          target_id?: number
-          target_type?: Database["public"]["Enums"]["target_type"]
-          updated_at?: string
-          user_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comment_parent_comment_id_fkey"
-            columns: ["parent_comment_id"]
-            isOneToOne: false
-            referencedRelation: "comment"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comment_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      file: {
-        Row: {
-          cos_key: string
-          created_at: string
-          filename: string
-          id: number
-          mimetype: string
-          originalname: string
-          size: number
-          type: string
-          updated_at: string
+          name: string
+          run_time: string | null
           url: string
         }
         Insert: {
-          cos_key: string
-          created_at?: string
-          filename: string
-          id: number
-          mimetype: string
-          originalname: string
-          size: number
-          type: string
-          updated_at?: string
+          copyright?: string | null
+          description?: string | null
+          icp?: string | null
+          id?: number
+          name: string
+          run_time?: string | null
           url: string
         }
         Update: {
-          cos_key?: string
-          created_at?: string
-          filename?: string
+          copyright?: string | null
+          description?: string | null
+          icp?: string | null
           id?: number
-          mimetype?: string
-          originalname?: string
-          size?: number
-          type?: string
-          updated_at?: string
+          name?: string
+          run_time?: string | null
           url?: string
         }
         Relationships: []
@@ -299,38 +237,6 @@ export type Database = {
         }
         Relationships: []
       }
-      like: {
-        Row: {
-          created_at: string
-          id: number
-          target_id: number
-          target_type: Database["public"]["Enums"]["like_target_type"]
-          user_id: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          target_id: number
-          target_type: Database["public"]["Enums"]["like_target_type"]
-          user_id: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          target_id?: number
-          target_type?: Database["public"]["Enums"]["like_target_type"]
-          user_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       meta: {
         Row: {
           content: string | null
@@ -367,77 +273,6 @@ export type Database = {
         }
         Relationships: []
       }
-      notification: {
-        Row: {
-          content: string
-          created_at: string
-          id: number
-          is_read: boolean
-          target_id: number
-          target_type: Database["public"]["Enums"]["like_target_type"]
-          type: Database["public"]["Enums"]["notification_type"]
-          user_id: number
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: number
-          is_read?: boolean
-          target_id: number
-          target_type: Database["public"]["Enums"]["like_target_type"]
-          type: Database["public"]["Enums"]["notification_type"]
-          user_id: number
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: number
-          is_read?: boolean
-          target_id?: number
-          target_type?: Database["public"]["Enums"]["like_target_type"]
-          type?: Database["public"]["Enums"]["notification_type"]
-          user_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "notification_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      site: {
-        Row: {
-          copyright: string | null
-          description: string | null
-          icp: string | null
-          id: number
-          name: string
-          run_time: string | null
-          url: string
-        }
-        Insert: {
-          copyright?: string | null
-          description?: string | null
-          icp?: string | null
-          id?: number
-          name: string
-          run_time?: string | null
-          url: string
-        }
-        Update: {
-          copyright?: string | null
-          description?: string | null
-          icp?: string | null
-          id?: number
-          name?: string
-          run_time?: string | null
-          url?: string
-        }
-        Relationships: []
-      }
       tag: {
         Row: {
           created_at: string
@@ -464,80 +299,6 @@ export type Database = {
           usage_count?: number | null
         }
         Relationships: []
-      }
-      user: {
-        Row: {
-          auth_id: string | null
-          avatar_url: string | null
-          created_at: string
-          email: string
-          id: number
-          password_hash: string
-          phone: string | null
-          push_type: string | null
-          push_url: string | null
-          updated_at: string
-          username: string
-        }
-        Insert: {
-          auth_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email: string
-          id?: number
-          password_hash: string
-          phone?: string | null
-          push_type?: string | null
-          push_url?: string | null
-          updated_at?: string
-          username: string
-        }
-        Update: {
-          auth_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string
-          id?: number
-          password_hash?: string
-          phone?: string | null
-          push_type?: string | null
-          push_url?: string | null
-          updated_at?: string
-          username?: string
-        }
-        Relationships: []
-      }
-      view: {
-        Row: {
-          id: number
-          target_id: number
-          target_type: Database["public"]["Enums"]["like_target_type"]
-          user_id: number | null
-          viewed_at: string
-        }
-        Insert: {
-          id?: number
-          target_id: number
-          target_type: Database["public"]["Enums"]["like_target_type"]
-          user_id?: number | null
-          viewed_at?: string
-        }
-        Update: {
-          id?: number
-          target_id?: number
-          target_type?: Database["public"]["Enums"]["like_target_type"]
-          user_id?: number | null
-          viewed_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "view_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {
@@ -686,6 +447,7 @@ export const Constants = {
     },
   },
 } as const
+
 
 
 type InitOptions = {

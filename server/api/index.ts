@@ -2,7 +2,7 @@ export { createApiRouter }
 
 import { logger } from '@/server/middleware/logger'
 import { articleRoute } from './article/article.route'
-import { categoryRoutes } from './category'
+import { categoryRoute } from './category/category.route'
 import { tagRoutes } from './tag'
 import { healthRouter } from './health/health.route'
 import { initSupabase } from '@/supabase'
@@ -24,7 +24,7 @@ function createApiRouter() {
 
   // Mount route handlers
   app.route('/articles', articleRoute)
-  app.route('/categories', categoryRoutes)
+  app.route('/categories', categoryRoute)
   app.route('/tags', tagRoutes)
   app.route('/health', healthRouter)
 

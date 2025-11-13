@@ -12,10 +12,23 @@ app.get('/', async (c) => {
 
   const response = await supabase
     .from('article')
-    .select('*', { count: 'exact' })
+    .select('id, title, created_at', { count: 'exact' })
     .eq('is_published', true)
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1)
+
+  return result.from(c, response)
+})
+
+app.get('/:id', async (c) => {
+  const id = Number(c.req.param('id'))
+  const supabase = c.get('supabase')
+
+  const response = await supabase
+    .from('article')
+    .select('*, category(id, name, description, created_at, updated_at, emoji)')
+    .eq('id', id)
+    .single()
 
   return result.from(c, response)
 })
