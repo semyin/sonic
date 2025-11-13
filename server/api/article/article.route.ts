@@ -42,3 +42,32 @@ app.post('/', async (c) => {
 
   return result.from(c, response)
 })
+
+app.put('/:id', async (c) => {
+  const id = Number(c.req.param('id'))
+  const supabase = c.get('supabase')
+  const body = await c.req.json()
+
+  const response = await supabase
+    .from('article')
+    .update(body)
+    .eq('id', id)
+    .select()
+    .single()
+
+  return result.from(c, response)
+})
+
+app.delete('/:id', async (c) => {
+  const id = Number(c.req.param('id'))
+  const supabase = c.get('supabase')
+
+  const response = await supabase
+    .from('article')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single()
+
+  return result.from(c, response)
+})
