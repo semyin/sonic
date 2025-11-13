@@ -66,7 +66,11 @@ export const result = {
     options?: string[] | ((data: NonNullable<T>) => any)
   ) {
     if (response.error) {
-      return result.error(c, response.error.message || 'Database error')
+      let message = response.error.message
+      if (response.error.details) {
+        message = response.error.message + ' [' + response.error.details + ']'
+      }
+      return result.error(c, message || 'Database error')
     }
 
     let data: any = response.data

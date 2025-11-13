@@ -6,8 +6,6 @@ import { result } from '@/server/utils/response'
 const app = createApp()
 
 app.get('/', async (c) => {
-  const page = Number(c.req.query('page')) || 1
-  const pageSize = Number(c.req.query('pageSize')) || 10
   const supabase = c.get('supabase')
 
   const response = await supabase
@@ -15,7 +13,6 @@ app.get('/', async (c) => {
     .select('id, title, created_at', { count: 'exact' })
     .eq('is_published', true)
     .order('created_at', { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1)
 
   return result.from(c, response)
 })
@@ -28,6 +25,19 @@ app.get('/:id', async (c) => {
     .from('article')
     .select('*, category(id, name, description, created_at, updated_at, emoji)')
     .eq('id', id)
+    .single()
+
+  return result.from(c, response)
+})
+
+app.post('/', async (c) => {
+  const supabase = c.get('supabase')
+  const body = await c.req.json()
+
+  const response = await supabase
+    .from('article')
+    .insert(body)
+    .select()
     .single()
 
   return result.from(c, response)

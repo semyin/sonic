@@ -3,11 +3,13 @@ export { createApiRouter }
 import { logger } from '@/server/middleware/logger'
 import { articleRoute } from './article/article.route'
 import { categoryRoute } from './category/category.route'
+import { loginRoute } from './login/login.route'
 import { tagRoutes } from './tag'
 import { healthRouter } from './health/health.route'
 import { initSupabase } from '@/supabase'
 import { createApp } from '../utils'
 import { result } from '../utils/response'
+import { getCookie } from 'hono/cookie'
 
 function createApiRouter() {
 
@@ -17,12 +19,20 @@ function createApiRouter() {
   app.use('*', logger)
 
   app.use('*', async (c, next) => {
-    const supabase = initSupabase()
+    const accessToken = getCookie(c, 'access_token')
+    const supabase = initSupabase({
+      global: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    })  
     c.set('supabase', supabase)
     await next()
   })
 
   // Mount route handlers
+  app.route('/login', loginRoute)
   app.route('/articles', articleRoute)
   app.route('/categories', categoryRoute)
   app.route('/tags', tagRoutes)
