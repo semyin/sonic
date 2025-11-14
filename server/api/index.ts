@@ -4,7 +4,7 @@ import { logger } from '@/server/middleware/logger'
 import { articleRoute } from './article/article.route'
 import { categoryRoute } from './category/category.route'
 import { loginRoute } from './login/login.route'
-import { tagRoutes } from './tag'
+import { tagRoute } from './tag/tag.route'
 import { healthRouter } from './health/health.route'
 import { initSupabase } from '@/supabase'
 import { createApp } from '../utils'
@@ -36,7 +36,7 @@ function createApiRouter() {
   app.route('/login', loginRoute)
   app.route('/articles', articleRoute)
   app.route('/categories', categoryRoute)
-  app.route('/tags', tagRoutes)
+  app.route('/tags', tagRoute)
   app.route('/health', healthRouter)
 
   // 404 handler for API routes - must be last

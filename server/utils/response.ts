@@ -82,12 +82,25 @@ export const result = {
       if (!obj) return obj
       if (Array.isArray(obj)) return obj.map(formatTime)
       if (typeof obj === 'object') {
-        const result = { ...obj }
-        for (const key of timeFields) {
-          if (result[key]) {
+        const result: any = {}
+        for (const key in obj) {
+          const value = obj[key]
+
+          // 如果是时间字段，格式化
+          if (timeFields.includes(key) && value) {
             try {
-              result[key] = formatInTimeZone(new Date(result[key]), 'Asia/Shanghai', 'yyyy-MM-dd HH:mm:ss')
-            } catch {}
+              result[key] = formatInTimeZone(new Date(value), 'Asia/Shanghai', 'yyyy-MM-dd HH:mm:ss')
+            } catch {
+              result[key] = value
+            }
+          }
+          // 如果是对象或数组，递归处理
+          else if (value && (typeof value === 'object' || Array.isArray(value))) {
+            result[key] = formatTime(value)
+          }
+          // 其他值直接赋值
+          else {
+            result[key] = value
           }
         }
         return result
