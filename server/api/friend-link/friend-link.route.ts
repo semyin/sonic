@@ -55,3 +55,13 @@ app.delete('/:id', async (c) => {
 
   return result.from(c, response)
 })
+
+app.patch('/:id/visibility', async (c) => {
+  const id = Number(c.req.param('id'))
+  const supabase = c.get('supabase')
+  const { is_visible } = await c.req.json<{ is_visible: boolean }>()
+
+  const response = await supabase.from('friend_link').update({ is_visible }).eq('id', id).select().single()
+
+  return result.from(c, response)
+})
