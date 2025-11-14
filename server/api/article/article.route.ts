@@ -73,3 +73,19 @@ app.delete('/:id', async (c) => {
 
   return result.from(c, response)
 })
+
+app.patch('/:id/publish', async (c) => {
+  const id = Number(c.req.param('id'))
+  const body = await c.req.json()
+  const { is_published } = body
+  const supabase = c.get('supabase')
+
+  const response = await supabase
+    .from('article')
+    .update({ is_published })
+    .eq('id', id)
+    .select()
+    .single()
+
+  return result.from(c, response)
+})
