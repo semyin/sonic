@@ -7,11 +7,12 @@ const app = createApp()
 
 app.get('/', async (c) => {
   const supabase = c.get('supabase')
+  const { is_visible } = c.req.query()
 
   const response = await supabase
     .from('friend_link')
     .select('*')
-    .eq('is_visible', true)
+    .eq('is_visible', is_visible === 'true')
     .order('sort_weight', { ascending: false })
     .order('created_at', { ascending: false })
 
