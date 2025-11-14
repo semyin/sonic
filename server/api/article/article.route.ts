@@ -89,3 +89,21 @@ app.patch('/:id/publish', async (c) => {
 
   return result.from(c, response)
 })
+
+app.put('/:id/tags', async (c) => {
+  const id = Number(c.req.param('id'))
+  const supabase = c.get('supabase')
+  const { tagIds } = await c.req.json<{ tagIds: number[] }>()
+
+  await supabase.from('article_tag').delete().eq('article_id', id)
+
+  if (tagIds.length > 0) {
+    const response = await supabase
+      .from('article_tag')
+      .insert(tagIds.map(tag_id => ({ article_id: id, tag_id })))
+
+    return result.from(c, response)
+  }
+
+  return result.from(c, { data: [], error: null })
+})
