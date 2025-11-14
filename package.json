@@ -3,12 +3,7 @@
     "dev": "vike dev",
     "build": "vike build",
     "pages-dev": "vike build && wrangler pages dev",
-    "pages-deploy": "vike build && wrangler pages deploy",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:stats": "tsx scripts/check-db-stats.ts"
+    "pages-deploy": "vike build && wrangler pages deploy"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.81.0",
