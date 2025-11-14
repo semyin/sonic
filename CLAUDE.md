@@ -10,7 +10,7 @@ This is a blog application built with Vike + React, configured for deployment to
 - **Tailwind CSS v4** for styling
 - **Hono** server for Cloudflare Workers/Pages integration
 - **vike-cloudflare** for Cloudflare-specific optimizations
-- **Drizzle ORM** with PostgreSQL for database management
+- **Supabase** for database and authentication
 - **date-fns** for date formatting and manipulation
 
 ## Development Commands
@@ -27,13 +27,6 @@ npm run pages-dev
 
 # Deploy to Cloudflare Pages
 npm run pages-deploy
-
-# Database commands
-npm run db:generate  # Generate migration files from schema
-npm run db:migrate   # Run pending migrations
-npm run db:push      # Push schema changes directly (dev only)
-npm run db:studio    # Open Drizzle Studio (database GUI)
-npm run db:stats     # Check database statistics and table counts
 ```
 
 ## Architecture
@@ -59,119 +52,67 @@ npm run db:stats     # Check database statistics and table counts
 /pages         - Vike pages with filesystem routing
 /layouts       - Layout components (LayoutDefault.tsx)
 /components    - Reusable React components
-/database      - Database layer with Drizzle ORM
-  schema.ts    - Complete database schema (15 tables)
-  client.ts    - Database connection configuration with getDb()
-  types.ts     - TypeScript type definitions
-  /services    - Database service layer
-    article.ts   - Article service with CRUD operations
-    category.ts  - Category management service
-    tag.ts       - Tag management service
-    index.ts     - Service exports
+/supabase      - Supabase client and type definitions
+  index.ts     - Supabase client initialization with initSupabase()
+  type.ts      - Auto-generated TypeScript types from database schema
 /server        - Hono server configuration
   index.ts     - Main server entry point
   /api         - RESTful API endpoints
-    index.ts   - API router
-    article.ts - Article endpoints
-    category.ts- Category endpoints
-    tag.ts     - Tag endpoints
-/scripts       - Utility scripts (migration, db stats, etc.)
+    index.ts   - API router with Supabase middleware
+    article/   - Article endpoints
+    category/  - Category endpoints
+    tag/       - Tag endpoints
+    login/     - Authentication endpoints
+    health/    - Health check endpoint
+  /middleware  - Custom middleware (logger)
+  /utils       - Server utilities (response helpers)
 /assets        - Static assets
 ```
 
-### Database Layer (Drizzle ORM)
-- **ORM**: Drizzle ORM for type-safe database operations
-- **Driver**: `postgres` for PostgreSQL connections
-- **Schema**: Complete blog schema with 15 tables in `database/schema.ts`
-- **Migrations**: Generated in `database/migrations/` (gitignored)
-- **Configuration**: `drizzle.config.ts` for Drizzle Kit
-- **Platform-agnostic**: Can easily switch between PostgreSQL providers (Supabase, Neon, Railway, etc.)
-- **Connection Management**: Uses `getDb()` function to create fresh DB connections per request (Cloudflare Workers compatible)
-
-#### Database Connection Pattern
-The database client uses a **non-singleton pattern** optimized for Cloudflare Workers:
-- Each request creates a fresh connection via `getDb(env)`
-- Internal connection pooling handled by `postgres` library
-- Configured with `prepare: false` for Supabase Pooler Transaction Mode compatibility
-- Single connection per client (`max: 1`)
-- Auto-closes idle connections after 20 seconds
-
-#### Available Services
-- `ArticleService` - Article CRUD with relations (author, category, tags)
-- `CategoryService` - Category management
-- `TagService` - Tag management with article associations
+### Database Layer (Supabase)
+- **Client**: `@supabase/supabase-js` for type-safe database operations
+- **Types**: Auto-generated TypeScript types in `supabase/type.ts`
+- **Initialization**: Use `initSupabase(options?)` function to create client instances
+- **Authentication**: Access token passed via cookies and injected into Supabase client headers
 
 #### Database Tables
 Core tables:
-- `user` - User accounts with auth and profile info
 - `article` - Blog articles with metadata (views, likes, comments)
-- `category` - Article categories
-- `tag` - Article tags
+- `category` - Article categories with emoji support
+- `tag` - Article tags with usage tracking
 - `article_tag` - Many-to-many article-tag relations
 - `brief` - Short posts/updates
-- `comment` - Nested comments for articles/briefs
-- `like` - User likes for articles/briefs
-- `view` - View tracking
-- `notification` - User notifications
-- `file` - File uploads metadata
+- `config` - Site-wide configuration
 - `friend_link` - Friend links/blogroll
-- `site` - Site-wide configuration
 - `meta` - SEO meta tags
 
-#### Database Usage Pattern
+#### Supabase Client Pattern
 ```typescript
-import { getDb } from '../database/client'
-import { ArticleService, CategoryService, TagService } from '../database/services'
+import { initSupabase } from '@/supabase'
 
-// In Cloudflare Workers / API routes
-const db = getDb({ DATABASE_URL: env.DATABASE_URL })
-const articleService = new ArticleService(db)
-const categoryService = new CategoryService(db)
-const tagService = new TagService(db)
-
-// Article operations
-const articles = await articleService.getPublishedArticles(1, 10)
-const article = await articleService.getArticleById(1)
-await articleService.createArticle({
-  title: 'My Post',
-  content: 'Content...',
-  authorId: 1,
-  categoryId: 1,
-  tagIds: [1, 2, 3],
-  isPublished: true
+// In API routes (with auth)
+const accessToken = getCookie(c, 'access_token')
+const supabase = initSupabase({
+  global: {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  }
 })
 
-// Category operations
-const categories = await categoryService.getAllCategories()
-await categoryService.createCategory({ name: 'Tech', description: 'Tech posts' })
-
-// Tag operations
-const tags = await tagService.getAllTags()
-const postTags = await tagService.getTagsForArticle(1)
+// Query example
+const response = await supabase
+  .from('article')
+  .select('*, category(*), tags:tag(*)')
+  .eq('is_published', true)
+  .order('created_at', { ascending: false })
 ```
-
-#### Article Table Schema
-- `id` (serial, primary key)
-- `title` (varchar 255)
-- `content` (text)
-- `summary` (varchar 500, nullable)
-- `authorId` (integer, foreign key to user)
-- `categoryId` (integer, foreign key to category, nullable)
-- `tags` (varchar 255, comma-separated, for compatibility)
-- `coverImage` (varchar 255, nullable)
-- `isPublished` (boolean, default false)
-- `isTop` (boolean, default false)
-- `viewCount` (integer, default 0)
-- `likeCount` (integer, default 0)
-- `commentCount` (integer, default 0)
-- `type` (varchar 50, default 'article')
-- `createdAt` (timestamp)
-- `updatedAt` (timestamp)
 
 ### TypeScript Configuration
 - Build target: ES2022
 - Module resolution: Bundler
 - JSX: react-jsx (React 19)
+- Path aliases: `@/*` maps to project root
 - Types include `vite/client` and `vike-react`
 
 ## RESTful API Endpoints
@@ -181,63 +122,40 @@ The application provides a complete RESTful API built with Hono, mounted at `/ap
 ### Article Endpoints
 
 **GET** `/api/articles`
-- Get paginated list of published articles
-- Query params: `page` (default: 1), `pageSize` (default: 10)
-- Returns: Articles with author, category, and pagination info
+- Get list of published articles
+- Returns: Articles with id, title, created_at
 
 **GET** `/api/articles/:id`
-- Get article by ID with full relations (author, category, tags)
-- Automatically increments view count
-- Returns: 404 if not found
-
-**GET** `/api/articles/category/:categoryId`
-- Get articles filtered by category
-- Query params: `page`, `pageSize`
-
-**GET** `/api/articles/tag/:tagId`
-- Get articles filtered by tag
-- Query params: `page`, `pageSize`
+- Get article by ID with full relations (category, tags)
+- Returns: Article with nested category and tag data
 
 **POST** `/api/articles`
 - Create new article
-- Body: `{ title, content, summary?, authorId, categoryId?, tagIds?, coverImage?, isPublished?, isTop? }`
-- Returns: Created article (201)
+- Body: Article data matching Supabase Insert type
 
 **PUT** `/api/articles/:id`
 - Update existing article
-- Body: Same as POST (all fields optional)
-- Returns: Updated article or 404
+- Body: Partial article data
 
 **DELETE** `/api/articles/:id`
-- Delete article (cascades to article_tag relations)
-- Returns: Success message
-
-**POST** `/api/articles/:id/like`
-- Increment article like count
-- Returns: Success message
+- Delete article by ID
 
 ### Category Endpoints
 
 **GET** `/api/categories`
-- Get all categories (ordered by creation date)
+- Get all categories
 
 **GET** `/api/categories/:id`
 - Get category by ID
-- Returns: 404 if not found
 
 **POST** `/api/categories`
 - Create new category
-- Body: `{ name, description? }`
-- Returns: Created category (201)
 
 **PUT** `/api/categories/:id`
 - Update category
-- Body: `{ name?, description? }`
-- Returns: Updated category or 404
 
 **DELETE** `/api/categories/:id`
 - Delete category
-- Returns: Success message
 
 ### Tag Endpoints
 
@@ -246,98 +164,41 @@ The application provides a complete RESTful API built with Hono, mounted at `/ap
 
 **GET** `/api/tags/:id`
 - Get tag by ID
-- Returns: 404 if not found
-
-**GET** `/api/tags/name/:name`
-- Get tag by name
-- Returns: 404 if not found
 
 **POST** `/api/tags`
 - Create new tag
-- Body: `{ name, description? }`
-- Returns: Created tag (201)
-
-**POST** `/api/tags/bulk`
-- Create or retrieve multiple tags by name
-- Body: `{ names: string[] }`
-- Returns: Array of tags
 
 **PUT** `/api/tags/:id`
 - Update tag
-- Body: `{ name?, description? }`
-- Returns: Updated tag or 404
 
 **DELETE** `/api/tags/:id`
-- Delete tag (cascades to article_tag relations)
-- Returns: Success message
+- Delete tag
 
 ### API Response Format
 
-All endpoints return responses in this format:
-
-**Success:**
-```json
-{
-  "success": true,
-  "data": { /* result */ }
-}
-```
-
-**Error:**
-```json
-{
-  "success": false,
-  "error": "Error message"
-}
-```
-
-### API Usage Example
+All endpoints use a standardized response helper from `server/utils/response.ts`:
 
 ```typescript
-// Fetch published articles
-const response = await fetch('/api/articles?page=1&pageSize=10')
-const { data } = await response.json()
-console.log(data.articles) // Array of articles
-console.log(data.pagination) // Pagination info
+// Success response
+result.from(c, supabaseResponse)
 
-// Get article by ID
-const articleRes = await fetch('/api/articles/1')
-const { data: article } = await articleRes.json()
-
-// Create article
-const createRes = await fetch('/api/articles', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    title: 'My Article',
-    content: 'Content here...',
-    authorId: 1,
-    categoryId: 2,
-    tagIds: [1, 2, 3],
-    isPublished: true
-  })
-})
+// Error response
+result.error(c, message, statusCode)
 ```
+
+### API Middleware
+
+- **Logger**: Applied to all API routes via `server/middleware/logger.ts`
+- **Supabase Injection**: Automatically injects authenticated Supabase client into context
+- **Error Handler**: Global error handler for unhandled exceptions
 
 ## Cloudflare Pages Deployment
 
 The build process creates a Cloudflare-compatible bundle in `dist/cloudflare`. The separation between `build` and `pages-dev`/`pages-deploy` scripts ensures Wrangler commands run only after the Vike build completes.
 
 ### Environment Variables
-- **Local Development**: Set `DATABASE_URL` in `wrangler.toml` under `[vars]` section
+- **Local Development**: Set `SUPABASE_URL` and `SUPABASE_KEY` in `wrangler.toml` under `[vars]` section
 - **Production**: Configure in Cloudflare Pages dashboard under Settings > Environment variables
-- **Format**: `postgresql://username:password@host:port/database`
-- **Example**: `.env.example` contains templates for various PostgreSQL providers
-
-### Database Setup
-1. Create a PostgreSQL database on your preferred platform (Supabase, Neon, Railway, etc.)
-2. Copy connection string to `wrangler.toml` under `[vars]` or use `.env.local`
-3. Run `npm run db:push` to create all tables
-4. (Optional) Migrate existing MySQL data using `tsx scripts/migrate-from-mysql.ts`
-
-### Data Migration from MySQL
-If migrating from an existing MySQL database:
-1. Install mysql2: `npm install mysql2`
-2. Set environment variables for MySQL connection
-3. Run migration script: `tsx scripts/migrate-from-mysql.ts`
-4. See `MIGRATION.md` for detailed instructions and troubleshooting
+- **Required Variables**:
+  - `SUPABASE_URL`: Your Supabase project URL
+  - `SUPABASE_KEY`: Your Supabase anon/public key
