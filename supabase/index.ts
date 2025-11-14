@@ -168,36 +168,6 @@ export type Database = {
         }
         Relationships: []
       }
-      config: {
-        Row: {
-          copyright: string | null
-          description: string | null
-          icp: string | null
-          id: number
-          name: string
-          run_time: string | null
-          url: string
-        }
-        Insert: {
-          copyright?: string | null
-          description?: string | null
-          icp?: string | null
-          id?: number
-          name: string
-          run_time?: string | null
-          url: string
-        }
-        Update: {
-          copyright?: string | null
-          description?: string | null
-          icp?: string | null
-          id?: number
-          name?: string
-          run_time?: string | null
-          url?: string
-        }
-        Relationships: []
-      }
       friend_link: {
         Row: {
           avatar_url: string | null
@@ -270,6 +240,63 @@ export type Database = {
           resource_id?: number | null
           resource_type?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profile: {
+        Row: {
+          about_content: string | null
+          author_name: string | null
+          avatar_url: string | null
+          bio: string | null
+          contacts: Json | null
+          copyright: string | null
+          created_at: string | null
+          description: string | null
+          icp: string | null
+          id: number
+          location: string | null
+          name: string
+          run_time: string | null
+          skills: Json | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          about_content?: string | null
+          author_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          contacts?: Json | null
+          copyright?: string | null
+          created_at?: string | null
+          description?: string | null
+          icp?: string | null
+          id?: number
+          location?: string | null
+          name: string
+          run_time?: string | null
+          skills?: Json | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          about_content?: string | null
+          author_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          contacts?: Json | null
+          copyright?: string | null
+          created_at?: string | null
+          description?: string | null
+          icp?: string | null
+          id?: number
+          location?: string | null
+          name?: string
+          run_time?: string | null
+          skills?: Json | null
+          updated_at?: string | null
+          url?: string
         }
         Relationships: []
       }
