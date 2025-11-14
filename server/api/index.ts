@@ -6,6 +6,7 @@ import { categoryRoute } from './category/category.route'
 import { loginRoute } from './login/login.route'
 import { tagRoute } from './tag/tag.route'
 import { metaRoute } from './meta/meta.route'
+import { friendLinkRoute } from './friend-link/friend-link.route'
 import { healthRouter } from './health/health.route'
 import { initSupabase } from '@/supabase'
 import { createApp } from '../utils'
@@ -39,6 +40,7 @@ function createApiRouter() {
   app.route('/categories', categoryRoute)
   app.route('/tags', tagRoute)
   app.route('/meta', metaRoute)
+  app.route('/friend-links', friendLinkRoute)
   app.route('/health', healthRouter)
 
   // 404 handler for API routes - must be last
