@@ -44,7 +44,7 @@ function createApiRouter() {
   app.route('/health', healthRouter)
 
   // 404 handler for API routes - must be last
-  app.get('*', (c) => {
+  app.all('*', (c) => {
     return result.error(c, `API endpoint not found: ${c.req.method} ${c.req.path}`, 404)
   })
 
