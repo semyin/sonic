@@ -1,6 +1,7 @@
 export { app as uploadRoute }
 
 import { createApp } from '@/server/utils'
+import { bodyLimit } from 'hono/body-limit'
 import { result } from '@/server/utils/response'
 
 const app = createApp()
@@ -18,6 +19,8 @@ const ALLOWED_IMAGE_TYPES = [
 // 最大文件大小 (20MB)
 const MAX_FILE_SIZE = 20 * 1024 * 1024
 
+const BUCKET_NAME = import.meta.env.SUPABASE_BUCKET_NAME
+
 // 生成安全的文件名（移除中文和特殊字符）
 function generateSafeFileName(originalName: string): string {
   // 获取文件扩展名
@@ -33,7 +36,12 @@ function generateSafeFileName(originalName: string): string {
 }
 
 // 上传文件
-app.post('/', async (c) => {
+app.post('/', bodyLimit({
+  maxSize: MAX_FILE_SIZE,
+  onError: (c) => {
+    return result.error(c, `File size exceeds maximum limit of ${MAX_FILE_SIZE / 1024 / 1024} MB`, 400)
+  }
+}), async (c) => {
   const supabase = c.get('supabase')
   const body = await c.req.parseBody()
   const file = body['file'] as File
@@ -47,18 +55,12 @@ app.post('/', async (c) => {
     return result.error(c, `Invalid file type. Allowed types: ${ALLOWED_IMAGE_TYPES.join(', ')}`, 400)
   }
 
-  // 验证文件大小
-  if (file.size > MAX_FILE_SIZE) {
-    return result.error(c, `File size exceeds maximum limit of ${MAX_FILE_SIZE / 1024 / 1024}MB`, 400)
-  }
-
   // 生成安全的文件名
   const fileName = generateSafeFileName(file.name)
-  const bucketName = import.meta.env.SUPABASE_BUCKET_NAME
 
   // 上传文件
   const { data, error } = await supabase.storage
-    .from(bucketName)
+    .from(BUCKET_NAME)
     .upload(fileName, file, {
       contentType: file.type,
       cacheControl: '3600',
@@ -71,7 +73,7 @@ app.post('/', async (c) => {
 
   // 获取公开 URL
   const { data: urlData } = supabase.storage
-    .from(bucketName)
+    .from(BUCKET_NAME)
     .getPublicUrl(fileName)
 
   return result.ok(c, {
@@ -84,36 +86,28 @@ app.post('/', async (c) => {
 app.delete('/:path', async (c) => {
   const supabase = c.get('supabase')
   const path = c.req.param('path')
-  const bucketName = 'images'
 
-  const { error } = await supabase.storage
-    .from(bucketName)
+  const response = await supabase.storage
+    .from(BUCKET_NAME)
     .remove([path])
 
-  if (error) {
-    return result.error(c, error.message, 500)
-  }
-
-  return result.ok(c, { message: 'File deleted successfully' })
+  return result.from(c, response)
 })
 
 // 获取文件列表
 app.get('/list', async (c) => {
+  // 分页
+  const { page = 1, pageSize = 100 } = c.req.query()
   const supabase = c.get('supabase')
-  const bucketName = 'images'
   const { folder = '' } = c.req.query()
 
-  const { data, error } = await supabase.storage
-    .from(bucketName)
+  const response = await supabase.storage
+    .from(BUCKET_NAME)
     .list(folder, {
-      limit: 100,
-      offset: 0,
+      limit: Number(pageSize),
+      offset: (Number(page) - 1) * Number(pageSize),
       sortBy: { column: 'created_at', order: 'desc' }
     })
 
-  if (error) {
-    return result.error(c, error.message, 500)
-  }
-
-  return result.ok(c, data)
+  return result.from(c, response)
 })
