@@ -18,6 +18,20 @@ const ALLOWED_IMAGE_TYPES = [
 // 最大文件大小 (20MB)
 const MAX_FILE_SIZE = 20 * 1024 * 1024
 
+// 生成安全的文件名（移除中文和特殊字符）
+function generateSafeFileName(originalName: string): string {
+  // 获取文件扩展名
+  const lastDotIndex = originalName.lastIndexOf('.')
+  const ext = lastDotIndex !== -1 ? originalName.substring(lastDotIndex) : ''
+
+  // 生成随机字符串
+  const randomStr = Math.random().toString(36).substring(2, 15)
+  const timestamp = Date.now()
+
+  // 返回：时间戳-随机字符串.扩展名
+  return `${timestamp}-${randomStr}${ext}`
+}
+
 // 上传文件
 app.post('/', async (c) => {
   const supabase = c.get('supabase')
@@ -38,10 +52,9 @@ app.post('/', async (c) => {
     return result.error(c, `File size exceeds maximum limit of ${MAX_FILE_SIZE / 1024 / 1024}MB`, 400)
   }
 
-  // 生成唯一文件名
-  const timestamp = Date.now()
-  const fileName = `${timestamp}-${file.name}`
-  const bucketName = import.meta.env.SUPABASE_BUCKET_NAME // 你的 bucket 名称
+  // 生成安全的文件名
+  const fileName = generateSafeFileName(file.name)
+  const bucketName = import.meta.env.SUPABASE_BUCKET_NAME
 
   // 上传文件
   const { data, error } = await supabase.storage
