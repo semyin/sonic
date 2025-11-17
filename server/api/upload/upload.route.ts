@@ -109,5 +109,5 @@ app.get('/list', async (c) => {
       sortBy: { column: 'created_at', order: 'desc' }
     })
 
-  return result.from(c, response)
+  return result.from(c, response, ['last_accessed_at', 'created_at', 'updated_at', 'lastModified'])
 })
