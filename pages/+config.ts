@@ -1,6 +1,5 @@
 import type { Config } from "vike/types";
 import vikeReact from "vike-react/config";
-import { app } from "@/layouts/LayoutDefault";
 import vikeCloudflare from 'vike-cloudflare/config'
 
 // Default config (can be overridden by pages)
@@ -8,7 +7,6 @@ import vikeCloudflare from 'vike-cloudflare/config'
 
 export default {
   // https://vike.dev/Layout
-  Layout: app,
 
   // https://vike.dev/head-tags
   title: "My Vike App",

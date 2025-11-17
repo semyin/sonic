@@ -1,3 +1,18 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
 body {
-  	font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,Helvetica,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif;
+	/* font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica, Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif; */
+}
+
+:root {
+	--border-color: #e5e5e5;
+	--accent-color: #0066cc;
+	--bg-secondary: #ffffff;
+	--shadow: rgba(0, 0, 0, 0.05);
+	--text-primary: #333333;
+	--text-secondary: #666666;
+	--text-tertiary: #999999;
 }
