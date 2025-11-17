@@ -5,7 +5,7 @@ import styles from './index.module.scss'
 function Page() {
   return (
     <div className={styles['posts']}>
-      <h1>Hello World</h1>
+      <h1>Posts</h1>
       <div className={styles['list']}>
         <ul>
           <li><time>2025-01-01</time><a href="">全栈开发实战：使用 React, Node.js 和 Express 构建一个实时聊天应用</a></li>
