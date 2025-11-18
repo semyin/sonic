@@ -1,0 +1,117 @@
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.pageDescription {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.tagSwitcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-content: flex-start;
+}
+
+.tagItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--accent-color);
+    color: #ffffff;
+    transform: translateY(-1px);
+
+    .tagCount {
+      background: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+
+  &.active {
+    background: var(--accent-color);
+    color: #ffffff;
+    transform: translateY(-1px);
+
+    .tagCount {
+      background: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+.tagCount {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--tag-text);
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  min-width: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.tagPanel {
+  flex: 1 0 100%;
+  margin-top: 24px;
+}
+
+.tagPostsHeader {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.postList {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+
+  li {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  time {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-right: 10px;
+  }
+
+  a {
+    text-decoration: none;
+    color: #0070f3;
+
+    &:hover {
+      color: var(--accent-color);
+    }
+  }
+}
