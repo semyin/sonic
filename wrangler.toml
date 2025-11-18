@@ -12,3 +12,6 @@ compatibility_flags = ["nodejs_compat"]
 # Settings > Environment variables
 [vars]
 # DATABASE_URL = "postgresql://username:password@host:port/database"
+[[kv_namespaces]]
+  binding = "KV"  # 代码中使用的变量名
+  id = "86bc502ddc244460bfbc7d77f15702b9"  # 从 Dashboard 复制
