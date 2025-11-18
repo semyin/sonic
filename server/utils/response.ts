@@ -1,5 +1,4 @@
 import type { Context } from 'hono'
-import { format } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
 export interface SuccessResponse<T = any> {
@@ -12,39 +11,6 @@ export interface SuccessResponse<T = any> {
 export interface ErrorResponse {
   code: number
   msg: string
-}
-
-export type ApiResponse<T = any> = SuccessResponse<T> | ErrorResponse
-
-/**
- * Send success response
- */
-export function success<T>(c: Context, data: T, status = 200, msg = 'Success', count?: number) {
-  const response: SuccessResponse<T> = {
-    code: status,
-    msg,
-    data
-  }
-  if (count !== undefined) response.count = count
-  return c.json<SuccessResponse<T>>(response, status as any)
-}
-
-/**
- * Send error response
- */
-export function error(c: Context, msg: string, status = 500) {
-  return c.json<ErrorResponse>({
-    code: status,
-    msg
-  }, status as any)
-}
-
-/**
- * Handle errors from try-catch
- */
-export function handleError(c: Context, err: unknown, status = 500) {
-  const msg = err instanceof Error ? err.message : 'Unknown error'
-  return error(c, msg, status)
 }
 
 /**
