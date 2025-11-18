@@ -1,0 +1,169 @@
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 32px;
+}
+
+.profileContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--tag-bg, #f0f0f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.bio {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.location {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.aboutContent {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.skillsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.skillItem {
+  padding: 16px;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.skillName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.skillCategory {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.skillBar {
+  width: 100%;
+  height: 6px;
+  background: var(--tag-bg, #f0f0f0);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skillProgress {
+  height: 100%;
+  background: var(--accent-color);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.contactList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+  }
+}
+
+.contactIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.contactInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.contactLabel {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+
+.contactValue {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
