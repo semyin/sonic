@@ -2,6 +2,7 @@ export { Layout }
 
 import { Link } from '@/components/Link'
 import '@/assets/css/app.css'
+import lightMode from '@/assets/img/light.svg'
 import styles from './Layout.module.scss'
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -30,7 +31,7 @@ function Header() {
 
       </nav>
       <div className={styles['tool-box']}>
-        <button><img src="./assets/img/light.svg" alt="light mode" /></button>
+        <button><img src={lightMode} alt="light mode" /></button>
       </div>
     </header>
   )
