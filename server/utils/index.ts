@@ -4,10 +4,13 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import { Hono } from 'hono'
 
 type Variables = {
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient<Database>
+}
+
+type Bindings = {
   KV: KVNamespace
 }
 
 export const createApp = () => {
-  return new Hono<{ Variables: Variables }>()
+  return new Hono<{ Variables: Variables; Bindings: Bindings }>()
 }

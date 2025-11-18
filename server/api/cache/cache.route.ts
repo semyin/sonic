@@ -6,7 +6,7 @@ import { result } from '@/server/utils/response'
 const app = createApp()
 
 app.get('/', async (c) => {
-  const KV = c.get('KV')
+  const KV = c.env.KV
   const data = await KV.get('name')
-  return result.from(c, { data, error: null })
-})
+  return result.ok(c, { value: data })
+}) 
