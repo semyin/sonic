@@ -32,3 +32,10 @@ body {
 	--tag-text: #e5e5e5;
 	--icon-filter: invert(1);
 }
+
+.page-h1 {
+	font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}

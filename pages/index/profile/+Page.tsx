@@ -36,7 +36,7 @@ function Page() {
 
   return (
     <>
-      <h1>关于我</h1>
+      <h1 className='page-h1'>关于我</h1>
 
       <div className={styles.profileContainer}>
         {/* 个人信息头部 */}

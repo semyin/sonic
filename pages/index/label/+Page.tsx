@@ -88,7 +88,7 @@ function Page() {
 
   return (
     <>
-      <h1>标签</h1>
+      <h1 className='page-h1'>标签</h1>
       <p className={styles.pageDescription}>按标签类型浏览文章</p>
 
       <section className={styles.tagSwitcher}>

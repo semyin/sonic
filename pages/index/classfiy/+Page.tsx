@@ -49,7 +49,7 @@ function Page() {
 
   return (
     <>
-      <h1>所有分类</h1>
+      <h1 className='page-h1'>所有分类</h1>
 
       <div className={styles.list}>
         <ul>

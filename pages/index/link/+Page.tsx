@@ -65,7 +65,7 @@ function Page() {
 
   return (
     <>
-      <h1>友情链接</h1>
+      <h1 className='page-h1'>友情链接</h1>
       <p className={styles.pageDescription}>推荐的优质网站和资源</p>
 
       {links.length > 0 ? (
