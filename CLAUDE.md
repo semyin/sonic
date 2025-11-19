@@ -10,8 +10,10 @@ This is a blog application built with Vike + React, configured for deployment to
 - **Tailwind CSS v4** for styling
 - **Hono** server for Cloudflare Workers/Pages integration
 - **vike-cloudflare** for Cloudflare-specific optimizations
-- **Supabase** for database and authentication
+- **Supabase** for database and authentication (NOT Drizzle ORM)
 - **date-fns** for date formatting and manipulation
+
+**Important**: This project uses Supabase as the database layer with auto-generated TypeScript types. There is no Drizzle ORM or `database/` directory.
 
 ## Development Commands
 
