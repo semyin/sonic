@@ -38,6 +38,10 @@ function Header() {
 }
 
 function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <footer className={styles.footer}>
       <div>
@@ -46,7 +50,7 @@ function Footer() {
         <p>Theme sonic Powered by Supabase and cloudflare</p>
       </div>
       <div>
-        <button>🚀 Go Top</button>
+        <button onClick={scrollToTop}>🚀 Go Top</button>
       </div>
     </footer>
   )
