@@ -3,7 +3,7 @@ export { Page }
 function Page() {
   return (
     <div>
-      articles
+      label
     </div>
   )
 }
