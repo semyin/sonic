@@ -1,3 +1,5 @@
+// sectionTitle 已使用全局类，不再需要本地样式
+
 .profileContainer {
   max-width: 800px;
   margin: 0 auto;
@@ -86,19 +88,7 @@
   }
 }
 
-.sectionTitle {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-color);
-
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-    margin-bottom: 16px;
-  }
-}
+// sectionTitle 已移除，使用全局 .section-title 类
 
 .aboutContent {
   font-size: 1rem;

@@ -1,12 +1,4 @@
-.pageDescription {
-  color: var(--text-secondary);
-  margin-bottom: 32px;
-
-  @media (max-width: 768px) {
-    margin-bottom: 24px;
-    font-size: 0.9rem;
-  }
-}
+// pageDescription 和 postList 已使用全局类，不再需要本地样式
 
 .tagSwitcher {
   display: flex;
@@ -113,45 +105,4 @@
   }
 }
 
-.postList {
-  list-style: none;
-  margin-top: 20px;
-  padding: 0;
-
-  li {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-
-    @media (max-width: 768px) {
-      margin-bottom: 16px;
-      flex-direction: column;
-      gap: 4px;
-    }
-  }
-
-  time {
-    flex-shrink: 0;
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-right: 10px;
-
-    @media (max-width: 768px) {
-      font-size: 12px;
-      margin-right: 0;
-    }
-  }
-
-  a {
-    text-decoration: none;
-    color: var(--accent-color);
-
-    @media (max-width: 768px) {
-      font-size: 0.95rem;
-    }
-
-    &:hover {
-      color: var(--accent-color);
-    }
-  }
-}
+// postList 已使用全局类和 PostList 组件，不再需要本地样式

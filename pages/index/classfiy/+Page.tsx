@@ -1,6 +1,7 @@
 export { Page };
 
 import { useState } from 'react';
+import { PostList } from '@/components/PostList';
 import styles from './classfiy.module.scss';
 
 function Page() {
@@ -11,9 +12,9 @@ function Page() {
       icon: '💻',
       description: '编程、开发、技术分享',
       posts: [
-        { id: 1, title: '全栈开发实战：使用 React、Node.js 和 Express 构建实时聊天应用', date: '2025-01-01' },
-        { id: 2, title: '告别回调地狱：掌握 Node.js 的 Promise 与 Async/Await', date: '2025-01-08' },
-        { id: 3, title: 'React 性能优化：memo、useMemo 与 useCallback 的使用场景', date: '2025-01-11' }
+        { id: 1, title: '全栈开发实战：使用 React、Node.js 和 Express 构建实时聊天应用', created_at: '2025-01-01' },
+        { id: 2, title: '告别回调地狱：掌握 Node.js 的 Promise 与 Async/Await', created_at: '2025-01-08' },
+        { id: 3, title: 'React 性能优化：memo、useMemo 与 useCallback 的使用场景', created_at: '2025-01-11' }
       ]
     },
     {
@@ -22,7 +23,7 @@ function Page() {
       icon: '🎨',
       description: 'UI / UX、视觉设计',
       posts: [
-        { id: 4, title: '设计系统 2.0：从组件到视觉语言的落地实践', date: '2025-02-01' }
+        { id: 4, title: '设计系统 2.0：从组件到视觉语言的落地实践', created_at: '2025-02-01' }
       ]
     },
     {
@@ -31,7 +32,7 @@ function Page() {
       icon: '🌱',
       description: '生活感悟、个人思考',
       posts: [
-        { id: 5, title: 'iOS 内嵌 H5 解析 JSON 的那些坑', date: '2025-01-16' }
+        { id: 5, title: 'iOS 内嵌 H5 解析 JSON 的那些坑', created_at: '2025-01-16' }
       ]
     },
     {
@@ -73,18 +74,11 @@ function Page() {
       {activeCategory && (
         <section className={styles.categoryPosts}>
           <div className={styles.categoryPostsHeader}>
-            <h2>分类：{activeCategory.name}</h2>
+            <h2 className='section-title'>分类：{activeCategory.name}</h2>
             <p>{activeCategory.posts.length} 篇文章</p>
           </div>
 
-          <ul className={styles.postList}>
-            {activeCategory.posts.map(post => (
-              <li key={post.id}>
-                <time dateTime={post.date}>{post.date}</time>
-                <a href="#">{post.title}</a>
-              </li>
-            ))}
-          </ul>
+          <PostList posts={activeCategory.posts} />
         </section>
       )}
     </>

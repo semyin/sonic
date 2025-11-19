@@ -39,3 +39,83 @@ body {
   color: var(--text-primary);
   margin-bottom: 12px;
 }
+
+/* 页面描述文字 */
+.page-description {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+  .page-description {
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Section 标题 */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+}
+
+/* 文章列表 */
+.post-list {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.post-list li {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .post-list li {
+    margin-bottom: 16px;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.post-list time {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .post-list time {
+    font-size: 12px;
+    margin-right: 0;
+  }
+}
+
+.post-list a {
+  text-decoration: none;
+  color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+  .post-list a {
+    font-size: 0.95rem;
+  }
+}
+
+.post-list a:hover {
+  color: var(--accent-color);
+}

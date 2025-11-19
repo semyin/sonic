@@ -1,3 +1,5 @@
+// categoryPostsHeader 和 postList 已使用全局类和 PostList 组件，不再需要本地样式
+
 .list ul {
   list-style: none;
   margin-top: 24px;
@@ -122,18 +124,6 @@
 
 .categoryPostsHeader {
   margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
-
-  h2 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--text-primary);
-
-    @media (max-width: 768px) {
-      font-size: 1.1rem;
-    }
-  }
 
   p {
     margin-top: 6px;
@@ -146,48 +136,7 @@
   }
 }
 
-.postList {
-  list-style: none;
-  margin-top: 20px;
-  padding: 0;
-
-  li {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-
-    @media (max-width: 768px) {
-      margin-bottom: 16px;
-      flex-direction: column;
-      gap: 4px;
-    }
-  }
-
-  time {
-    flex-shrink: 0;
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-right: 10px;
-
-    @media (max-width: 768px) {
-      font-size: 12px;
-      margin-right: 0;
-    }
-  }
-
-  a {
-    text-decoration: none;
-    color: var(--accent-color);
-
-    @media (max-width: 768px) {
-      font-size: 0.95rem;
-    }
-
-    &:hover {
-      color: var(--accent-color);
-    }
-  }
-}
+// postList 已使用全局类和 PostList 组件，不再需要本地样式
 
 .postEmpty {
   margin-top: 12px;

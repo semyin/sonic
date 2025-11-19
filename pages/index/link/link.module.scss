@@ -1,12 +1,4 @@
-.pageDescription {
-  color: var(--text-secondary);
-  margin-bottom: 32px;
-
-  @media (max-width: 768px) {
-    margin-bottom: 24px;
-    font-size: 0.9rem;
-  }
-}
+// pageDescription 已使用全局类，不再需要本地样式
 
 .linkGrid {
   display: grid;

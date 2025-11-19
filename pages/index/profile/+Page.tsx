@@ -54,13 +54,13 @@ function Page() {
 
         {/* 关于我 */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>关于我</h2>
+          <h2 className='section-title'>关于我</h2>
           <div className={styles.aboutContent}>{profile.about}</div>
         </section>
 
         {/* 技能 */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>技能</h2>
+          <h2 className='section-title'>技能</h2>
           <div className={styles.skillsGrid}>
             {profile.skills.map((skill, index) => (
               <div key={index} className={styles.skillItem}>
@@ -79,7 +79,7 @@ function Page() {
 
         {/* 联系方式 */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>联系方式</h2>
+          <h2 className='section-title'>联系方式</h2>
           <div className={styles.contactList}>
             {profile.contacts.map((contact, index) => (
               <a
