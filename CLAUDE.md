@@ -46,6 +46,13 @@ npm run pages-deploy
 - Cloudflare-specific settings in `wrangler.toml`:
   - Output directory: `dist/cloudflare`
   - Compatibility flag: `nodejs_compat` (for Node.js APIs)
+  - KV namespace binding: `KV` (configured in wrangler.toml)
+
+### KV Storage
+- **Cloudflare KV** used for caching (profile data, etc.)
+- Accessed via `c.env.KV` in Hono context
+- **Development**: Mock KV implementation in `server/utils/index.ts` automatically used when KV binding unavailable
+- **Production**: Real KV namespace configured in `wrangler.toml` and Cloudflare dashboard
 
 ### Project Structure
 ```
@@ -53,8 +60,7 @@ npm run pages-deploy
 /layouts       - Layout components (LayoutDefault.tsx)
 /components    - Reusable React components
 /supabase      - Supabase client and type definitions
-  index.ts     - Supabase client initialization with initSupabase()
-  type.ts      - Auto-generated TypeScript types from database schema
+  index.ts     - Database types and initSupabase() function
 /server        - Hono server configuration
   index.ts     - Main server entry point
   /api         - RESTful API endpoints
@@ -62,16 +68,21 @@ npm run pages-deploy
     article/   - Article endpoints
     category/  - Category endpoints
     tag/       - Tag endpoints
+    meta/      - Meta tag endpoints
+    friend-link/ - Friend link endpoints
+    profile/   - Profile endpoints
+    upload/    - File upload endpoints
+    cache/     - Cache management endpoints
     login/     - Authentication endpoints
     health/    - Health check endpoint
   /middleware  - Custom middleware (logger)
-  /utils       - Server utilities (response helpers)
+  /utils       - Server utilities (response helpers, createApp)
 /assets        - Static assets
 ```
 
 ### Database Layer (Supabase)
 - **Client**: `@supabase/supabase-js` for type-safe database operations
-- **Types**: Auto-generated TypeScript types in `supabase/type.ts`
+- **Types**: Auto-generated TypeScript types in `supabase/index.ts`
 - **Initialization**: Use `initSupabase(options?)` function to create client instances
 - **Authentication**: Access token passed via cookies and injected into Supabase client headers
 
@@ -82,9 +93,9 @@ Core tables:
 - `tag` - Article tags with usage tracking
 - `article_tag` - Many-to-many article-tag relations
 - `brief` - Short posts/updates
-- `config` - Site-wide configuration
 - `friend_link` - Friend links/blogroll
 - `meta` - SEO meta tags
+- `profile` - Site profile and author information
 
 #### Supabase Client Pattern
 ```typescript
@@ -174,6 +185,29 @@ The application provides a complete RESTful API built with Hono, mounted at `/ap
 **DELETE** `/api/tags/:id`
 - Delete tag
 
+### Other Endpoints
+
+**GET/POST/PUT/DELETE** `/api/meta`
+- Manage SEO meta tags
+
+**GET/POST/PUT/DELETE** `/api/friend-links`
+- Manage friend links/blogroll
+
+**GET/PUT** `/api/profile`
+- Get or update site profile
+
+**POST** `/api/upload`
+- Upload files
+
+**GET/DELETE** `/api/cache`
+- Manage KV cache
+
+**POST** `/api/login`
+- Authentication endpoint
+
+**GET** `/api/health`
+- Health check endpoint
+
 ### API Response Format
 
 All endpoints use a standardized response helper from `server/utils/response.ts`:
@@ -197,8 +231,9 @@ result.error(c, message, statusCode)
 The build process creates a Cloudflare-compatible bundle in `dist/cloudflare`. The separation between `build` and `pages-dev`/`pages-deploy` scripts ensures Wrangler commands run only after the Vike build completes.
 
 ### Environment Variables
-- **Local Development**: Set `SUPABASE_URL` and `SUPABASE_KEY` in `wrangler.toml` under `[vars]` section
+- **Local Development**: Create `.env` file (see `.env.example`)
 - **Production**: Configure in Cloudflare Pages dashboard under Settings > Environment variables
 - **Required Variables**:
   - `SUPABASE_URL`: Your Supabase project URL
   - `SUPABASE_KEY`: Your Supabase anon/public key
+  - `DATABASE_URL`: PostgreSQL connection string (optional, for direct database access)
