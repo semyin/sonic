@@ -15,4 +15,20 @@ body {
 	--text-primary: #333333;
 	--text-secondary: #666666;
 	--text-tertiary: #999999;
+	--tag-bg: #f0f0f0;
+	--tag-text: #333333;
+	--icon-filter: none;
+}
+
+:root.dark {
+	--border-color: #333333;
+	--accent-color: #66b3ff;
+	--bg-secondary: #1a1a1a;
+	--shadow: rgba(255, 255, 255, 0.05);
+	--text-primary: #e5e5e5;
+	--text-secondary: #b3b3b3;
+	--text-tertiary: #808080;
+	--tag-bg: #2a2a2a;
+	--tag-text: #e5e5e5;
+	--icon-filter: invert(1);
 }

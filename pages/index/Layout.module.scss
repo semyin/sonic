@@ -4,14 +4,16 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 a {
   text-decoration: none;
-  color: #0070f3;
+  color: var(--accent-color);
 
   &:visited {
-    color: #0070f3;
+    color: var(--accent-color);
   }
 }
 
@@ -53,6 +55,7 @@ footer {
       img {
         width: 25px;
         height: 25px;
+        filter: var(--icon-filter);
       }
     }
   }
@@ -67,6 +70,7 @@ footer {
   justify-content: space-between;
   align-items: center;
   margin-top: 40px;
+  color: var(--text-secondary);
 
   button {
     border: none;
@@ -76,5 +80,6 @@ footer {
     align-items: center;
     justify-content: center;
     font-size: 16px;
+    color: var(--text-primary);
   }
 }

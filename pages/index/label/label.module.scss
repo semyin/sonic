@@ -45,7 +45,8 @@ h1 {
   &.active {
     background: var(--accent-color);
     color: #ffffff;
-    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    border-color: var(--accent-color);
 
     .tagCount {
       background: rgba(255, 255, 255, 0.3);
@@ -108,7 +109,7 @@ h1 {
 
   a {
     text-decoration: none;
-    color: #0070f3;
+    color: var(--accent-color);
 
     &:hover {
       color: var(--accent-color);

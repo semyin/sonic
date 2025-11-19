@@ -1,11 +1,19 @@
 export { Layout }
 
 import { Link } from '@/components/Link'
+import { useEffect } from 'react'
 import '@/assets/css/app.css'
 import lightMode from '@/assets/img/light.svg'
 import styles from './Layout.module.scss'
 
 function Layout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const theme = localStorage.getItem('theme')
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    }
+  }, [])
+
   return (
     <div className={styles['defalut-layout']}>
       <Header />
@@ -18,6 +26,11 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Header() {
+  const toggleDarkMode = () => {
+    document.documentElement.classList.toggle('dark')
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')
+  }
+
   return (
     <header className={styles.header}>
       <nav>
@@ -31,7 +44,7 @@ function Header() {
 
       </nav>
       <div className={styles['tool-box']}>
-        <button><img src={lightMode} alt="light mode" /></button>
+        <button onClick={toggleDarkMode}><img src={lightMode} alt="light mode" /></button>
       </div>
     </header>
   )
