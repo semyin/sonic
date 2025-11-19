@@ -42,6 +42,11 @@
   cursor: pointer;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 
+  @media (max-width: 768px) {
+    padding: 12px 8px;
+    gap: 10px;
+  }
+
   &:hover .categoryName,
   &:focus-visible .categoryName {
     color: var(--accent-color);
@@ -61,6 +66,11 @@
   justify-content: center;
   min-width: 32px;
   margin-top: 2px;
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    min-width: 28px;
+  }
 }
 
 .categoryContent {
@@ -77,21 +87,37 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
+
+  @media (max-width: 768px) {
+    font-size: 0.95rem;
+  }
 }
 
 .categoryCount {
   font-size: 0.85rem;
   color: var(--text-tertiary);
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 }
 
 .categoryMeta {
   margin-top: 4px;
   font-size: 0.9rem;
   color: var(--text-secondary);
+
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
 }
 
 .categoryPosts {
   margin-top: 48px;
+
+  @media (max-width: 768px) {
+    margin-top: 32px;
+  }
 }
 
 .categoryPostsHeader {
@@ -103,12 +129,20 @@
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--text-primary);
+
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
   }
 
   p {
     margin-top: 6px;
     color: var(--text-secondary);
     font-size: 0.9rem;
+
+    @media (max-width: 768px) {
+      font-size: 0.85rem;
+    }
   }
 }
 
@@ -121,6 +155,12 @@
     margin-bottom: 20px;
     display: flex;
     align-items: flex-start;
+
+    @media (max-width: 768px) {
+      margin-bottom: 16px;
+      flex-direction: column;
+      gap: 4px;
+    }
   }
 
   time {
@@ -128,11 +168,20 @@
     font-size: 14px;
     color: var(--text-secondary);
     margin-right: 10px;
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+      margin-right: 0;
+    }
   }
 
   a {
     text-decoration: none;
     color: var(--accent-color);
+
+    @media (max-width: 768px) {
+      font-size: 0.95rem;
+    }
 
     &:hover {
       color: var(--accent-color);
