@@ -20,7 +20,7 @@ function Page() {
     }
   })
 
-  const articles = data?.data || []
+  const articles = data || []
 
   return (
     <div className="space-y-4">

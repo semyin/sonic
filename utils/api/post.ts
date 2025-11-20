@@ -1,5 +1,5 @@
 import type { Tables, TablesInsert, TablesUpdate } from '@/supabase'
-import { apiClient } from './client'
+import { request } from './request'
 
 export type Article = Tables<'article'>
 export type ArticleInsert = TablesInsert<'article'>
@@ -11,13 +11,20 @@ export type ArticleWithRelations = Article & {
 }
 
 export const articleApi = {
-  getList: () => apiClient.get('/api/articles'),
-  getById: (id: number) => apiClient.get(`/api/articles/${id}`),
-  create: (data: ArticleInsert) => apiClient.post('/api/articles', data),
-  update: (id: number, data: ArticleUpdate) => apiClient.put(`/api/articles/${id}`, data),
-  delete: (id: number) => apiClient.delete(`/api/articles/${id}`),
+
+  getList: () => request.get<Article[]>('/articles'),
+
+  getById: (id: number) => request.get<ArticleWithRelations>(`/articles/${id}`),
+
+  create: (data: ArticleInsert) => request.post<Article, ArticleInsert>('/articles', data),
+
+  update: (id: number, data: ArticleUpdate) => request.put<Article, ArticleUpdate>(`/articles/${id}`, data),
+
+  delete: (id: number) => request.delete<Article>(`/articles/${id}`),
+
   updatePublishStatus: (id: number, is_published: boolean) =>
-    apiClient.patch(`/api/articles/${id}/publish`, { is_published }),
+    request.patch<Article, { is_published: boolean }>(`/articles/${id}/publish`, { is_published }),
+
   updateTags: (id: number, tagIds: number[]) =>
-    apiClient.put(`/api/articles/${id}/tags`, { tagIds })
+    request.put<Article, { tagIds: number[] }>(`/articles/${id}/tags`, { tagIds })
 }
