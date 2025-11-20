@@ -6,7 +6,6 @@ import { result } from '@/server/utils/response'
 const app = createApp()
 
 app.get('/', async (c) => {
-  console.log(111);
   
   const supabase = c.get('supabase')
 
