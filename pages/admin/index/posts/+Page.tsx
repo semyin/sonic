@@ -2,7 +2,7 @@ export { Page }
 
 import { Plus, Edit, Trash2, Eye } from 'lucide-react'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { articleApi, type Article } from '@/lib/api/article'
+import { articleApi, type Article } from '@/utils/api/post'
 import { format } from 'date-fns'
 
 function Page() {
