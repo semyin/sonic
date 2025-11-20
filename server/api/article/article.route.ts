@@ -6,13 +6,27 @@ import { result } from '@/server/utils/response'
 const app = createApp()
 
 app.get('/', async (c) => {
-  
   const supabase = c.get('supabase')
 
   const response = await supabase
     .from('article')
     .select('id, title, created_at', { count: 'exact' })
     .eq('is_published', true)
+    .order('created_at', { ascending: false })
+
+  return result.from(c, response)
+})
+
+app.get('/admin', async (c) => {
+  const supabase = c.get('supabase')
+
+  const response = await supabase
+    .from('article')
+    .select(`
+      id, title, cover_image, is_top, is_published, view_count, created_at, updated_at,
+      category(id, name),
+      tags:tag(id, name)
+    `, { count: 'exact' })
     .order('created_at', { ascending: false })
 
   return result.from(c, response)

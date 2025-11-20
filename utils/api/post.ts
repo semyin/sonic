@@ -10,9 +10,16 @@ export type ArticleWithRelations = Article & {
   tags: Tables<'tag'>[]
 }
 
+export type ArticleAdmin = Pick<Article, 'id' | 'title' | 'cover_image' | 'is_top' | 'is_published' | 'view_count' | 'created_at' | 'updated_at'> & {
+  category: { id: number; name: string } | null
+  tags: { id: number; name: string }[]
+}
+
 export const articleApi = {
 
   getList: () => request.get<Article[]>('/articles'),
+
+  getAdminList: () => request.get<ArticleAdmin[]>('/articles/admin'),
 
   getById: (id: number) => request.get<ArticleWithRelations>(`/articles/${id}`),
 

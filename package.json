@@ -6,6 +6,7 @@
     "pages-deploy": "vike build && wrangler pages deploy"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
     "@supabase/supabase-js": "^2.81.0",
     "@tanstack/react-query": "^5.90.10",
     "@vitejs/plugin-react": "^5.0.2",

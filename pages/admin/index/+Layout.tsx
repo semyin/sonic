@@ -56,10 +56,10 @@ function Layout({ children }: { children: React.ReactNode }) {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4">
-          <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded transition-colors">
+          <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded transition-colors cursor-pointer">
             <Menu className="h-4 w-4" />
           </button>
-          <button onClick={toggleFullscreen} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded transition-colors">
+          <button onClick={toggleFullscreen} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded transition-colors cursor-pointer">
             <Maximize2 className="h-4 w-4" />
           </button>
         </header>
