@@ -22,13 +22,15 @@ interface HttpOptions {
   rawResponse?: boolean
 }
 
+const appDomain = import.meta.env.APP_DOMAIN || 'http://127.0.0.1:3000'
+
 class Http {
   private instance: $Fetch
   private loadingCount = 0
 
   constructor() {
     this.instance = ofetch.create({
-      baseURL: isSSR ? 'http://localhost:3000/api' : '/api',
+      baseURL: isSSR ? `${appDomain}/api` : '/api',
       timeout: 10000,
       onRequest: this.onRequest.bind(this),
       onRequestError: this.onRequestError.bind(this),
