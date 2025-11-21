@@ -2,7 +2,7 @@ export { Page }
 
 import { Plus, Edit, Trash2 } from 'lucide-react'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { articleApi, type ArticleAdmin } from '@/utils/api/post'
+import { articleApi, type ArticleAdmin } from '@/utils/api/article'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import {

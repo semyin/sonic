@@ -1,8 +1,10 @@
 export { Layout }
 
-import '@/assets/css/globals.css'
 import { LayoutDashboard, FileText, FolderOpen, Tag, Link, User, LogOut, Menu, Maximize2 } from 'lucide-react'
 import { useState } from 'react'
+import { navigate } from 'vike/client/router'
+import { authApi } from '@/utils/api/auth'
+import '@/assets/css/globals.css'
 
 function Layout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -21,6 +23,15 @@ function Layout({ children }: { children: React.ReactNode }) {
       document.documentElement.requestFullscreen()
     } else {
       document.exitFullscreen()
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout()
+      navigate('/admin/login')
+    } catch (err) {
+      console.error('退出登录失败', err)
     }
   }
 
@@ -47,7 +58,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="p-2 border-t border-gray-200">
-          <button className="w-full flex items-center justify-start gap-2 px-2 py-2 text-sm font-medium text-gray-700 rounded hover:bg-gray-100 transition-colors">
+          <button onClick={handleLogout} className="w-full flex items-center justify-start gap-2 px-2 py-2 text-sm font-medium text-gray-700 rounded hover:bg-gray-100 transition-colors">
             <LogOut className="h-4 w-4 flex-shrink-0" />
             <span className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>退出登录</span>
           </button>

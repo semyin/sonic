@@ -1,5 +1,6 @@
 export { Page }
 
+import { authApi } from '@/utils/api/auth'
 import '@/assets/css/globals.css'
 import { LogIn } from 'lucide-react'
 import { useState } from 'react'
@@ -17,21 +18,10 @@ function Page() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.msg || '登录失败')
-        return
-      }
-
-      navigate('/admin')
+      const res = await authApi.login(email, password)
+      if (res) navigate('/admin')
     } catch (err) {
+      console.error('登录失败', err)
       setError('网络错误，请重试')
     } finally {
       setLoading(false)

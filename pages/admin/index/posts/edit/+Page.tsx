@@ -2,7 +2,7 @@ export { Page }
 
 import { usePageContext } from 'vike-react/usePageContext'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { articleApi } from '@/utils/api/post'
+import { articleApi } from '@/utils/api/article'
 import { categoryApi } from '@/utils/api/category'
 import { tagApi } from '@/utils/api/tag'
 import { uploadApi } from '@/utils/api/upload'

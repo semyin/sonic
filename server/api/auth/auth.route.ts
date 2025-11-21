@@ -1,12 +1,12 @@
-export { app as loginRoute }
+export { app as authRoute }
 
 import { createApp } from "@/server/utils";
 import { result } from "@/server/utils/response";
-import { setCookie } from "hono/cookie";
+import { setCookie, deleteCookie } from "hono/cookie";
 
 const app = createApp()
 
-app.post('/', async (c) => {
+app.post('/login', async (c) => {
   const supabase = c.get('supabase')
   const body = await c.req.json()
 
@@ -27,3 +27,9 @@ app.post('/', async (c) => {
 
   return result.from(c, { data, error })
 })
+
+app.post('/logout', async (c) => {
+  deleteCookie(c, 'access_token')
+  return result.ok(c, null, '退出成功')
+})
+

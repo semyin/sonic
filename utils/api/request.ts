@@ -59,9 +59,11 @@ class Http {
     const { request, options } = context
 
     // 从vike page context获取cookie
-    const pageContext = usePageContext()
-    options.headers.set('Cookie',pageContext.headers?.cookie || '')
-
+    if (isSSR) {
+      const pageContext = usePageContext()
+      options.headers.set('Cookie',pageContext.headers?.cookie || '')
+    }
+    
     // const token = localStorage.getItem('token')
     // if (token) {
     //   const headers = new Headers(options.headers)

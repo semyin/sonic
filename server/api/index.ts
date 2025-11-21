@@ -3,7 +3,7 @@ export { createApiRouter }
 import { logger } from '@/server/middleware/logger'
 import { articleRoute } from './article/article.route'
 import { categoryRoute } from './category/category.route'
-import { loginRoute } from './login/login.route'
+import { authRoute } from './auth/auth.route'
 import { tagRoute } from './tag/tag.route'
 import { metaRoute } from './meta/meta.route'
 import { friendLinkRoute } from './friend-link/friend-link.route'
@@ -38,7 +38,7 @@ function createApiRouter() {
   })
 
   // Mount route handlers
-  app.route('/login', loginRoute)
+  app.route('/auth', authRoute)
   app.route('/articles', articleRoute)
   app.route('/categories', categoryRoute)
   app.route('/tags', tagRoute)
