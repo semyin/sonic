@@ -1,6 +1,7 @@
 import { ofetch, type $Fetch } from 'ofetch'
 import type { FetchContext } from 'ofetch'
 import { isSSR } from '../'
+import { usePageContext } from 'vike-react/usePageContext'
 
 interface ResponseData<T = any> {
   code: number
@@ -56,6 +57,10 @@ class Http {
 
   private async onRequest(context: FetchContext) {
     const { request, options } = context
+
+    // 从vike page context获取cookie
+    const pageContext = usePageContext()
+    options.headers.set('Cookie',pageContext.headers?.cookie || '')
 
     // const token = localStorage.getItem('token')
     // if (token) {
@@ -158,6 +163,9 @@ class Http {
   }
 
   async request<T = any>(url: string, options?: HttpOptions): Promise<T> {
+   
+    
+    
     const result = await this.instance(url, options as any);
     return result;
   }

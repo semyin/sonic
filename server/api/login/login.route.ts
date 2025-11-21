@@ -21,8 +21,7 @@ app.post('/', async (c) => {
 
   setCookie(c, 'access_token', data.session.access_token, {
     httpOnly: true,
-    secure: true, // 生产环境使用 HTTPS
-    sameSite: 'Lax',
+    secure: import.meta.env.PROD ? true : false, // 生产环境使用 HTTPS
     maxAge: data.session.expires_in // 7 天
   })
 

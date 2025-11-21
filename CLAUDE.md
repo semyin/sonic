@@ -15,6 +15,15 @@ This is a blog application built with Vike + React, configured for deployment to
 
 **Important**: This project uses Supabase as the database layer with auto-generated TypeScript types. There is no Drizzle ORM or `database/` directory.
 
+### Key Dependencies
+- **@tanstack/react-query**: Data fetching and state management
+- **@radix-ui**: Headless UI components (Dialog, Select)
+- **@uiw/react-md-editor**: Markdown editor for article content
+- **lucide-react**: Icon library
+- **class-variance-authority** + **clsx** + **tailwind-merge**: Styling utilities (combined via `cn()` helper in `utils/cn.ts`)
+- **ofetch**: HTTP client for API requests
+- **date-fns** + **date-fns-tz**: Date formatting (timezone: Asia/Shanghai)
+
 ## Development Commands
 
 ```bash
@@ -225,12 +234,27 @@ The application provides a complete RESTful API built with Hono, mounted at `/ap
 All endpoints use a standardized response helper from `server/utils/response.ts`:
 
 ```typescript
-// Success response
-result.from(c, supabaseResponse)
+// Success response structure
+{
+  code: 200,
+  msg: "Success",
+  data: T,
+  count?: number  // Optional, for paginated results
+}
 
-// Error response
-result.error(c, message, statusCode)
+// Error response structure
+{
+  code: number,  // HTTP status code
+  msg: string    // Error message
+}
+
+// Usage in API routes
+result.ok(c, data, msg?, count?)           // Direct success response
+result.from(c, supabaseResponse, options?) // Auto-format Supabase response
+result.error(c, message, statusCode?)      // Error response (default 500)
 ```
+
+**Important**: `result.from()` automatically formats timestamps to `Asia/Shanghai` timezone in `yyyy-MM-dd HH:mm:ss` format for fields: `created_at`, `updated_at` (configurable via options parameter).
 
 ### API Middleware
 
@@ -327,3 +351,23 @@ Example: `feat(admin): Add basic structure for admin login page`
 - Use auto-generated types: `Tables<'table_name'>`, `TablesInsert<'table_name'>`, `TablesUpdate<'table_name'>`
 - In API routes, get authenticated client via `c.get('supabase')`
 - Handle Supabase errors properly and return appropriate HTTP status codes
+
+### UI Components Pattern
+UI components follow shadcn/ui conventions:
+- Located in `/components/ui/`
+- Use `class-variance-authority` for variant-based styling
+- Combine classes with `cn()` utility from `utils/cn.ts`
+- Example pattern:
+```typescript
+import { cn } from '@/utils/cn'
+import { cva, type VariantProps } from 'class-variance-authority'
+
+const variants = cva('base-classes', {
+  variants: { variant: {...}, size: {...} },
+  defaultVariants: {...}
+})
+
+export function Component({ className, variant, ...props }: Props) {
+  return <div className={cn(variants({ variant, className }))} {...props} />
+}
+```
