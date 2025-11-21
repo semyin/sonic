@@ -19,15 +19,28 @@ app.get('/', async (c) => {
 
 app.get('/admin', async (c) => {
   const supabase = c.get('supabase')
+  const { title, category_id, tag_id, is_published } = c.req.query()
 
-  const response = await supabase
+  let query = supabase
     .from('article')
     .select(`
       id, title, cover_image, is_top, is_published, view_count, created_at, updated_at,
       category(id, name),
       tags:tag(id, name)
     `, { count: 'exact' })
-    .order('created_at', { ascending: false })
+
+  if (title) query = query.ilike('title', `%${title}%`)
+  if (category_id) query = query.eq('category_id', Number(category_id))
+  if (is_published !== undefined) query = query.eq('is_published', is_published === 'true')
+  if (tag_id) {
+    const { data: articleIds } = await supabase
+      .from('article_tag')
+      .select('article_id')
+      .eq('tag_id', Number(tag_id))
+    if (articleIds) query = query.in('id', articleIds.map(a => a.article_id))
+  }
+
+  const response = await query.order('created_at', { ascending: false })
 
   return result.from(c, response)
 })

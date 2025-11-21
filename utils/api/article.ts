@@ -15,11 +15,18 @@ export type ArticleAdmin = Pick<Article, 'id' | 'title' | 'cover_image' | 'is_to
   tags: { id: number; name: string }[]
 }
 
+export type ArticleSearchParams = {
+  title?: string
+  category_id?: number
+  tag_id?: number
+  is_published?: boolean
+}
+
 export const articleApi = {
 
   getList: () => request.get<Article[]>('/articles'),
 
-  getAdminList: () => request.get<ArticleAdmin[]>('/articles/admin'),
+  getAdminList: (params?: ArticleSearchParams) => request.get<ArticleAdmin[]>('/articles/admin', params as any),
 
   getById: (id: number) => request.get<ArticleWithRelations>(`/articles/${id}`),
 
