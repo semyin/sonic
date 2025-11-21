@@ -22,7 +22,7 @@ interface HttpOptions {
   rawResponse?: boolean
 }
 
-const appDomain = import.meta.env.APP_DOMAIN || 'http://127.0.0.1:3000'
+const appDomain = import.meta.env.PUBLIC_ENV__APP_DOMAIN || 'http://127.0.0.1:3000'
 
 class Http {
   private instance: $Fetch
