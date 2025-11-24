@@ -21,7 +21,8 @@ function Layout({ children }: { children: React.ReactNode }) {
   const pageContext = usePageContext()
   const currentPath = pageContext.urlPathname
 
-  const [sidebarWidth, setSidebarWidth] = useState('200px')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const sidebarWidth = sidebarCollapsed ? '64px' : '200px'
 
   const bgColor = useColorModeValue('gray.50', 'gray.950')
 
@@ -39,31 +40,13 @@ function Layout({ children }: { children: React.ReactNode }) {
     return crumbs
   }, [currentPath])
 
-  useEffect(() => {
-    // 监听侧边栏宽度变化
-    const handleResize = () => {
-      const sidebar = document.querySelector('aside')
-      if (sidebar) {
-        setSidebarWidth(`${sidebar.offsetWidth}px`)
-      }
-    }
-
-    handleResize()
-
-    const sidebar = document.querySelector('aside')
-    if (sidebar) {
-      const observer = new MutationObserver(handleResize)
-      observer.observe(sidebar, { attributes: true, attributeFilter: ['style'] })
-
-      return () => {
-        observer.disconnect()
-      }
-    }
-  }, [])
+  const handleSidebarCollapsedChange = (collapsed: boolean) => {
+    setSidebarCollapsed(collapsed)
+  }
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Sidebar currentPath={currentPath} />
+      <Sidebar currentPath={currentPath} onCollapsedChange={handleSidebarCollapsedChange} />
       <Navbar breadcrumbs={breadcrumbs} sidebarWidth={sidebarWidth} />
       <Box
         as="main"

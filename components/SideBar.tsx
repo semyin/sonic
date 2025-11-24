@@ -32,8 +32,19 @@ const menuItems: MenuItem[] = [
   { path: '/admin/profile', label: '个人信息', icon: MdPerson },
 ]
 
-function Sidebar({ currentPath }: { currentPath: string }) {
+interface SidebarProps {
+  currentPath: string
+  onCollapsedChange?: (collapsed: boolean) => void
+}
+
+function Sidebar({ currentPath, onCollapsedChange }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  const handleToggle = () => {
+    const newState = !isCollapsed
+    setIsCollapsed(newState)
+    onCollapsedChange?.(newState)
+  }
 
   const bgColor = useColorModeValue('white', 'gray.900')
   const borderColor = useColorModeValue('gray.200', 'gray.800')
@@ -95,7 +106,7 @@ function Sidebar({ currentPath }: { currentPath: string }) {
           aria-label="Toggle sidebar"
           variant="ghost"
           size="sm"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={handleToggle}
         >
           {isCollapsed ? <MdMenu size={20} /> : <MdMenuOpen size={20} />}
         </IconButton>
