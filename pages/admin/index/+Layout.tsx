@@ -1,10 +1,10 @@
 export { Layout }
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Box } from '@chakra-ui/react'
 import { Sidebar } from "@/components/SideBar"
 import { Navbar } from "@/components/Navbar"
-import { useColorModeValue } from '@/components/color-mode'
+import { useColorModeValue } from '@/components/theme/ColorMode'
 import { usePageContext } from 'vike-react/usePageContext'
 
 // 路由映射表

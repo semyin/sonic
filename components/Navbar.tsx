@@ -1,15 +1,10 @@
-'use client'
-
 export { Navbar }
 
 import { useState, useEffect } from 'react'
-import { Flex, Box, IconButton, Breadcrumb } from '@chakra-ui/react'
-import { ColorModeButton, useColorModeValue } from '@/components/color-mode'
-import { MdFullscreen, MdFullscreenExit, MdChevronRight } from 'react-icons/md'
-import { AiOutlineFullscreen, AiOutlineFullscreenExit } from "react-icons/ai";
+import { Flex, Box, IconButton, Link } from '@chakra-ui/react'
+import { ColorModeButton, useColorModeValue } from '@/components/theme/ColorMode'
+import { MdChevronRight } from 'react-icons/md'
 import { BiFullscreen, BiExitFullscreen } from "react-icons/bi";
-import { RxEnterFullScreen } from "react-icons/rx";
-import { RxExitFullScreen } from "react-icons/rx";
 
 interface BreadcrumbItem {
   label: string
@@ -77,25 +72,24 @@ function Navbar({ breadcrumbs, sidebarWidth = '200px' }: NavbarProps) {
             breadcrumbs.map((crumb, index) => (
               <Flex key={index} align="center" gap={2}>
                 {crumb.href && index < breadcrumbs.length - 1 ? (
-                  <a
+                  <Link
                     href={crumb.href}
-                    style={{
-                      color: textColor,
-                      transition: 'color 0.2s',
-                      textDecoration: 'none'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = linkHoverColor}
-                    onMouseLeave={(e) => e.currentTarget.style.color = textColor}
+                    color={textColor}
+                    transition="color 0.2s"
+                    textDecoration="none"
+                    _hover={{ color: linkHoverColor }}
                   >
                     {crumb.label}
-                  </a>
+                  </Link>
                 ) : (
                   <Box color={textColor} fontWeight="medium">
                     {crumb.label}
                   </Box>
                 )}
                 {index < breadcrumbs.length - 1 && (
-                  <MdChevronRight size={16} color={breadcrumbColor} />
+                  <Box color={breadcrumbColor} fontWeight="medium">
+                    <MdChevronRight size={16}  />
+                  </Box>
                 )}
               </Flex>
             ))

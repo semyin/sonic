@@ -5,9 +5,20 @@ export default function Head() {
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
-              const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-              document.documentElement.classList.add(theme);
-            })();
+              try {
+                var savedMode = localStorage.getItem('chakra-ui-color-mode');
+                var systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                var mode = savedMode || systemMode;
+                
+                if (mode === 'dark') {
+                  document.documentElement.classList.add('dark');
+                  document.documentElement.style.colorScheme = 'dark';
+                } else {
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.style.colorScheme = 'light';
+                }
+              } catch (e) {}
+            })()
           `,
         }}
       />{/* 其他 head 内容 */}

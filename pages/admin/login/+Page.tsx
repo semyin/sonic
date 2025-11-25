@@ -1,7 +1,7 @@
 export { Page }
 
-import { Button, ClientOnly, Skeleton } from "@chakra-ui/react"
-import { ColorModeButton, useColorMode, useColorModeValue } from "@/components/color-mode"
+import { Button, ClientOnly, Skeleton, Box } from "@chakra-ui/react"
+import { ColorModeButton, useColorMode, useColorModeValue } from "@/components/theme/ColorMode"
 
 function Page() {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -23,9 +23,9 @@ function Page() {
       </button>
       
       {/* 使用响应式颜色 */}
-      <div style={{ background: bg }}>
+      <Box bg={bg}>
         内容
-      </div>
+      </Box>
     </div>
     </>
   )

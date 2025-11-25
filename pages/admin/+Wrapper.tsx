@@ -1,8 +1,8 @@
 export { Wrapper }
 
 import { ChakraProvider, defaultSystem } from '@chakra-ui/react'
-import { ColorModeProvider } from "@/components/color-mode"
 import { Global } from '@emotion/react'
+import { Provider } from "@/components/theme/Provider"
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -25,9 +25,9 @@ function Wrapper({ children }: { children: React.ReactNode }) {
           },
         }}
       />
-      <ColorModeProvider disableTransitionOnChange={false}>
+      <Provider>
         {children}
-      </ColorModeProvider>
+      </Provider>
     </ChakraProvider>
   )
 }

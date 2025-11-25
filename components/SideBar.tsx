@@ -13,7 +13,7 @@ import {
   MdMenu,
   MdMenuOpen
 } from 'react-icons/md'
-import { useColorModeValue } from '@/components/color-mode'
+import { useColorModeValue } from '@/components/theme/ColorMode'
 
 const MotionBox = motion.create(Box)
 const MotionFlex = motion.create(Flex)
