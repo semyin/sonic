@@ -6,15 +6,12 @@ import { ThemeProvider, useTheme } from "next-themes"
 import type { ThemeProviderProps } from "next-themes"
 import * as React from "react"
 import { LuMoon, LuSun } from "react-icons/lu"
-import { usePageContext } from "vike-react/usePageContext"
 
-export interface ColorModeProviderProps extends ThemeProviderProps {
-  disableTransitionOnChange?: boolean
-}
+export interface ColorModeProviderProps extends ThemeProviderProps {}
 
 export function ColorModeProvider(props: ColorModeProviderProps) {
   return (
-    <ThemeProvider attribute="class" storageKey="theme" {...props} />
+    <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
   )
 }
 
@@ -28,20 +25,12 @@ export interface UseColorModeReturn {
 
 export function useColorMode(): UseColorModeReturn {
   const { resolvedTheme, setTheme, forcedTheme } = useTheme()
-
-  const [mounted, setMounted] = React.useState(false)
-  
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const colorMode = forcedTheme || resolvedTheme
   const toggleColorMode = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark")
   }
   return {
-    colorMode: mounted ? (colorMode as ColorMode) : "light",
-    // colorMode: colorMode as ColorMode,
+    colorMode: colorMode as ColorMode,
     setColorMode: setTheme,
     toggleColorMode,
   }
