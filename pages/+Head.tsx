@@ -1,24 +1,5 @@
-// https://vike.dev/Head
-
-//# BATI.has("mantine")
 import logoUrl from "../assets/logo.svg";
 
 export default function HeadDefault() {
-  const themeScript = `
-    (function() {
-      try {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        }
-      } catch (e) {}
-    })();
-  `;
-
-  return (
-    <>
-      <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      <link rel="icon" href={logoUrl} />
-    </>
-  );
+  return <link rel="icon" href={logoUrl} />;
 }
