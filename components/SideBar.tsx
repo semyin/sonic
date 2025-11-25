@@ -1,7 +1,7 @@
 export { Sidebar }
 
 import { useState } from 'react'
-import { Box, Flex, Text, IconButton } from '@chakra-ui/react'
+import { Box, Flex, Text, IconButton, Link } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import {
   MdArticle,
@@ -119,25 +119,25 @@ function Sidebar({ currentPath, onCollapsedChange }: SidebarProps) {
           const isActive = currentPath === item.path
 
           return (
-            <a
+            <Link
+              as="a"
               key={item.path}
               href={item.path}
-              style={{
-                display: 'block',
-                position: 'relative',
-                height: '44px',
-                cursor: 'pointer',
-                backgroundColor: isActive ? activeBg : 'transparent',
-                color: isActive ? activeColor : textColor,
-                borderRadius: '6px',
-                textDecoration: 'none',
-                transition: 'background-color 0.2s'
+              display='block'
+              position="relative"
+              h="44px"
+              cursor="pointer"
+              bg={isActive ? activeBg : 'transparent'}
+              color={isActive ? activeColor : textColor}
+              borderRadius="6px"
+              textDecoration="none"
+              transition="background-color 0.2s"
+              _hover={{
+                bg: isActive ? activeBg : hoverBg,
+                textDecoration: 'none'
               }}
-              onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.backgroundColor = hoverBg
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'
+              _focus={{
+                outlineStyle: 'none'
               }}
               title={isCollapsed ? item.label : undefined}
             >
@@ -168,7 +168,7 @@ function Sidebar({ currentPath, onCollapsedChange }: SidebarProps) {
                   </Text>
                 </Box>
               )}
-            </a>
+            </Link>
           )
         })}
       </Flex>
