@@ -22,7 +22,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const currentPath = pageContext.urlPathname
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const sidebarWidth = sidebarCollapsed ? '64px' : '200px'
+  const sidebarWidth = sidebarCollapsed ? '64px' : '150px'
 
   const bgColor = useColorModeValue('gray.50', 'gray.950')
 
@@ -46,13 +46,13 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Sidebar currentPath={currentPath} onCollapsedChange={handleSidebarCollapsedChange} />
-      <Navbar breadcrumbs={breadcrumbs} sidebarWidth={sidebarWidth} />
+      <Sidebar currentPath={currentPath} width={sidebarWidth} onCollapsedChange={handleSidebarCollapsedChange} />
+      <Navbar breadcrumbs={breadcrumbs} sidebarWidth={sidebarWidth} sidebarCollapsed={sidebarCollapsed} />
       <Box
         as="main"
         ml={sidebarWidth}
         mt="48px"
-        p={6}
+        p={4}
         transition="margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
       >
         {children}

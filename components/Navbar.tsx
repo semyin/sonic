@@ -5,6 +5,7 @@ import { Flex, Box, IconButton, Link } from '@chakra-ui/react'
 import { ColorModeButton, useColorModeValue } from '@/components/theme/ColorMode'
 import { MdChevronRight } from 'react-icons/md'
 import { BiFullscreen, BiExitFullscreen } from "react-icons/bi";
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface BreadcrumbItem {
   label: string
@@ -12,12 +13,24 @@ interface BreadcrumbItem {
 }
 
 interface NavbarProps {
-  breadcrumbs?: BreadcrumbItem[]
+  breadcrumbs: BreadcrumbItem[]
   sidebarWidth?: string
+  sidebarCollapsed?: boolean
 }
 
-function Navbar({ breadcrumbs, sidebarWidth = '200px' }: NavbarProps) {
+function Navbar({ breadcrumbs, sidebarWidth, sidebarCollapsed }: NavbarProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const isMobile = useIsMobile()
+
+  const showBreadcrumbs = () => {
+    if (isMobile) {
+      if (!sidebarCollapsed) {
+        return false
+      }
+    }
+    return true
+  }
 
   const bgColor = useColorModeValue('white', 'gray.900')
   const borderColor = useColorModeValue('gray.200', 'gray.800')
@@ -68,27 +81,28 @@ function Navbar({ breadcrumbs, sidebarWidth = '200px' }: NavbarProps) {
       <Flex h="full" align="center" justify="space-between">
         {/* 面包屑导航 */}
         <Flex align="center" gap={2} fontSize="sm" flex="1" minW="0">
-          {breadcrumbs && breadcrumbs.length > 0 && (
-            breadcrumbs.map((crumb, index) => (
+          {showBreadcrumbs() && (
+            breadcrumbs!.map((crumb, index) => (
               <Flex key={index} align="center" gap={2}>
-                {crumb.href && index < breadcrumbs.length - 1 ? (
+                {crumb.href && index < breadcrumbs!.length - 1 ? (
                   <Link
                     href={crumb.href}
                     color={textColor}
                     transition="color 0.2s"
                     textDecoration="none"
                     _hover={{ color: linkHoverColor }}
+                    overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap"
                   >
                     {crumb.label}
                   </Link>
                 ) : (
-                  <Box color={textColor} fontWeight="medium">
+                  <Box color={textColor} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                     {crumb.label}
                   </Box>
                 )}
-                {index < breadcrumbs.length - 1 && (
-                  <Box color={breadcrumbColor} fontWeight="medium">
-                    <MdChevronRight size={16}  />
+                {index < breadcrumbs!.length - 1 && (
+                  <Box color={breadcrumbColor}>
+                    <MdChevronRight size={16} />
                   </Box>
                 )}
               </Flex>

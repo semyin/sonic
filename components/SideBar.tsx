@@ -1,6 +1,6 @@
 export { Sidebar }
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Box, Flex, Text, IconButton, Link } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import {
@@ -11,9 +11,11 @@ import {
   MdPerson,
   MdLogout,
   MdMenu,
-  MdMenuOpen
+  MdMenuOpen,
+  MdDashboard
 } from 'react-icons/md'
 import { useColorModeValue } from '@/components/theme/ColorMode'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const MotionBox = motion.create(Box)
 const MotionFlex = motion.create(Flex)
@@ -25,6 +27,7 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
+  { path: '/admin', label: '首页', icon: MdDashboard },
   { path: '/admin/posts', label: '文章管理', icon: MdArticle },
   { path: '/admin/classfiy', label: '分类管理', icon: MdCategory },
   { path: '/admin/label', label: '标签管理', icon: MdLabel },
@@ -34,11 +37,34 @@ const menuItems: MenuItem[] = [
 
 interface SidebarProps {
   currentPath: string
+  width?: string
   onCollapsedChange?: (collapsed: boolean) => void
 }
 
-function Sidebar({ currentPath, onCollapsedChange }: SidebarProps) {
+const MOBILE_BREAKPOINT = 768
+
+function Sidebar({ currentPath, width, onCollapsedChange }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  // 使用 useRef 追踪状态，避免闭包陷阱，同时不作为依赖项触发 Effect 重运行
+  const isMobile = useIsMobile()
+  // 将回调函数存入 Ref，这样即使父组件传入的新函数变化了，也不会导致 useEffect 重新运行
+  const onCollapsedChangeRef = useRef(onCollapsedChange)
+  // 每次渲染都更新 Ref，保证回调是最新的
+  useEffect(() => {
+    onCollapsedChangeRef.current = onCollapsedChange
+  }, [onCollapsedChange])
+  useEffect(() => {
+    if (isMobile) {
+      // 变成了手机 -> 自动折叠
+      setIsCollapsed(true)
+      onCollapsedChangeRef.current?.(true)
+    } else {
+      // 变成了电脑 -> 自动展开
+      setIsCollapsed(false)
+      onCollapsedChangeRef.current?.(false)
+    }
+  }, [isMobile]) // 依赖项仅仅是 isMobile
 
   const handleToggle = () => {
     const newState = !isCollapsed
@@ -54,7 +80,6 @@ function Sidebar({ currentPath, onCollapsedChange }: SidebarProps) {
   const textColor = useColorModeValue('gray.700', 'gray.200')
   const logoutHoverBg = useColorModeValue('red.50', 'red.900')
   const logoutColor = useColorModeValue('red.500', 'red.400')
-  const logoBg = useColorModeValue('gray.100', 'gray.800')
 
   const handleLogout = async () => {
     try {
@@ -81,7 +106,7 @@ function Sidebar({ currentPath, onCollapsedChange }: SidebarProps) {
       flexDirection="column"
       zIndex={1000}
       initial={false}
-      animate={{ width: isCollapsed ? '64px' : '200px' }}
+      animate={{ width: isCollapsed ? '64px' : width }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       style={{ overflow: 'hidden' }}
     >
