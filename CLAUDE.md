@@ -16,13 +16,15 @@ This is a blog application built with Vike + React, configured for deployment to
 **Important**: This project uses Supabase as the database layer with auto-generated TypeScript types. There is no Drizzle ORM or `database/` directory.
 
 ### Key Dependencies
+- **@chakra-ui/react**: UI component library with theming support
 - **@tanstack/react-query**: Data fetching and state management
-- **@radix-ui**: Headless UI components (Dialog, Select)
 - **@uiw/react-md-editor**: Markdown editor for article content
-- **lucide-react**: Icon library
-- **class-variance-authority** + **clsx** + **tailwind-merge**: Styling utilities (combined via `cn()` helper in `utils/cn.ts`)
+- **react-icons**: Icon library (using Material Design and Bootstrap icons)
+- **tailwind-merge**: Utility for merging Tailwind CSS classes
 - **ofetch**: HTTP client for API requests
 - **date-fns** + **date-fns-tz**: Date formatting (timezone: Asia/Shanghai)
+- **framer-motion**: Animation library (used with Chakra UI)
+- **next-themes**: Theme management for dark/light mode
 
 ## Development Commands
 
@@ -353,21 +355,24 @@ Example: `feat(admin): Add basic structure for admin login page`
 - Handle Supabase errors properly and return appropriate HTTP status codes
 
 ### UI Components Pattern
-UI components follow shadcn/ui conventions:
-- Located in `/components/ui/`
-- Use `class-variance-authority` for variant-based styling
-- Combine classes with `cn()` utility from `utils/cn.ts`
+UI components use Chakra UI:
+- Located in `/components/`
+- Use Chakra UI's built-in components (Box, Flex, Button, etc.)
+- Theme management via `next-themes` and custom ColorMode component
+- Color mode utilities: `useColorModeValue()` for theme-aware styling
 - Example pattern:
 ```typescript
-import { cn } from '@/utils/cn'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { Box, Flex } from '@chakra-ui/react'
+import { useColorModeValue } from '@/components/theme/ColorMode'
 
-const variants = cva('base-classes', {
-  variants: { variant: {...}, size: {...} },
-  defaultVariants: {...}
-})
+export function Component() {
+  const bgColor = useColorModeValue('white', 'gray.900')
+  const textColor = useColorModeValue('gray.700', 'gray.200')
 
-export function Component({ className, variant, ...props }: Props) {
-  return <div className={cn(variants({ variant, className }))} {...props} />
+  return (
+    <Box bg={bgColor} color={textColor}>
+      <Flex>Content</Flex>
+    </Box>
+  )
 }
 ```
