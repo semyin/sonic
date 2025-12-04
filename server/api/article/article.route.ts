@@ -2,6 +2,7 @@ export { app as articleRoute }
 
 import { createApp } from '@/server/utils'
 import { result } from '@/server/utils/response'
+import { calculatePagination } from '@/server/utils/pagination'
 
 const app = createApp()
 
@@ -19,28 +20,37 @@ app.get('/', async (c) => {
 
 app.get('/admin', async (c) => {
   const supabase = c.get('supabase')
-  const { title, category_id, tag_id, is_published } = c.req.query()
+  const query = c.req.query()
+  const { title, category_id, tag_id, is_published } = query
+ 
+  // 分页参数处理
+  const { limit, offset } = calculatePagination({
+    page: query.page,
+    pageSize: query.pageSize ,
+  })
 
-  let query = supabase
+  let queryBuilder = supabase
     .from('article')
     .select(`
       id, title, cover_image, is_top, is_published, view_count, created_at, updated_at,
-      category(id, name),
+      category(id, name, emoji),
       tags:tag(id, name)
     `, { count: 'exact' })
 
-  if (title) query = query.ilike('title', `%${title}%`)
-  if (category_id) query = query.eq('category_id', Number(category_id))
-  if (is_published !== undefined) query = query.eq('is_published', is_published === 'true')
+  if (title) queryBuilder = queryBuilder.ilike('title', `%${title}%`)
+  if (category_id) queryBuilder = queryBuilder.eq('category_id', Number(category_id))
+  if (is_published !== undefined) queryBuilder = queryBuilder.eq('is_published', is_published === 'true')
   if (tag_id) {
     const { data: articleIds } = await supabase
       .from('article_tag')
       .select('article_id')
       .eq('tag_id', Number(tag_id))
-    if (articleIds) query = query.in('id', articleIds.map(a => a.article_id))
+    if (articleIds) queryBuilder = queryBuilder.in('id', articleIds.map(a => a.article_id))
   }
 
-  const response = await query.order('created_at', { ascending: false })
+  const response = await queryBuilder
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1)
 
   return result.from(c, response)
 })
