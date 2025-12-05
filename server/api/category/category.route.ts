@@ -11,7 +11,6 @@ app.get('/', async (c) => {
   const response = await supabase
     .from('category')
     .select('*')
-
   return result.from(c, response)
 })
 
