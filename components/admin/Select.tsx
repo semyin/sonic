@@ -17,6 +17,8 @@ interface ICategoryProps {
   options: ListCollection;
   defaultValue?: string[];
   disabled?: boolean;
+  onValueChange?: (details: { value: string[] }) => void;  // 新增：值变化回调
+  onOpenChange?: (details: { open: boolean }) => void;     // 新增：开关状态变化
 }
 
 type ICategoryPropsWithoutOptions = Omit<ICategoryProps, 'options'>;
@@ -31,6 +33,8 @@ function BaseSelect(props: ICategoryProps) {
       size={props.size || "md"}
       width={props.width || "200px"}
       disabled={props.disabled}
+      onValueChange={props.onValueChange}
+      onOpenChange={props.onOpenChange}
     >
       <Select.HiddenSelect />
       {
@@ -61,11 +65,44 @@ function BaseSelect(props: ICategoryProps) {
   )
 }
 
+// 不同 size 对应的尺寸规格
+const SIZE_MAPPINGS = {
+  xs: {
+    height: "8",
+    fontSize: "xs",
+    iconSize: "xs",
+    px: "2",
+  },
+  sm: {
+    height: "9",
+    fontSize: "sm",
+    iconSize: "sm",
+    px: "3"
+  },
+  md: {
+    height: "10",
+    fontSize: "md",
+    iconSize: "sm",
+    px: "4",
+  },
+  lg: {
+    height: "11",
+    fontSize: "lg",
+    iconSize: "md",
+    px: "4",
+  }
+} as const;
+
+
 function SelectSkeleton(props: ICategoryPropsWithoutOptions) {
+
+  const { size = "md", width, label } = props;
+  const sizeConfig = SIZE_MAPPINGS[size];
+
   return (
-    <Box width={props.width || "200px"}>
-      {props.label && <Skeleton height="20px" mb={2} width="100px" />}
-      <Skeleton height="40px" />
+    <Box width={width || "200px"}>
+      {label && <Skeleton height="20px" mb={2} width="100px" />}
+      <Skeleton height={sizeConfig.height} borderRadius="md" />
     </Box>
   );
 }

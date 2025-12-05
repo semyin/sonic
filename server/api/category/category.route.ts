@@ -1,5 +1,6 @@
 export { app as categoryRoute }
 
+import { sleep } from "@/server/utils/sleep";
 import { createApp } from "@/server/utils";
 import { result } from '@/server/utils/response'
 
@@ -11,6 +12,8 @@ app.get('/', async (c) => {
   const response = await supabase
     .from('category')
     .select('*')
+    // return result.error(c, '查询失败')
+  await sleep(10000)
   return result.from(c, response)
 })
 
