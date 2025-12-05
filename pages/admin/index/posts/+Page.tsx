@@ -8,10 +8,10 @@ function Page() {
     <>
       <h1>文章管理</h1>
       <HStack gap={4}>
-        <CategorySelect size="lg" />
-        <TagSelect multiple size="lg" />
-        <Button size="lg">查询</Button>
-        <Button size="lg" variant="subtle">清空条件</Button>
+        <CategorySelect size="sm" />
+        <TagSelect multiple size="sm" />
+        <Button size="sm">查询</Button>
+        <Button size="sm" variant="subtle">清空条件</Button>
       </HStack>
     </>
   )
